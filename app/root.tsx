@@ -1,75 +1,78 @@
-import {
-  isRouteErrorResponse,
-  Links,
-  Meta,
-  Outlet,
-  Scripts,
-  ScrollRestoration,
-} from "react-router";
-
-import type { Route } from "./+types/root";
+import { useState, useEffect } from "react";
+import { auth, db } from "./lib/firebase"; // Importamos db
+import { onAuthStateChanged, signOut } from "firebase/auth";
+import { doc, getDoc } from "firebase/firestore"; // Para buscar el nombre
+import { Link, Links, Meta, Outlet, Scripts, ScrollRestoration, useNavigate } from "react-router";
 import "./app.css";
 
-export const links: Route.LinksFunction = () => [
-  { rel: "preconnect", href: "https://fonts.googleapis.com" },
-  {
-    rel: "preconnect",
-    href: "https://fonts.gstatic.com",
-    crossOrigin: "anonymous",
-  },
-  {
-    rel: "stylesheet",
-    href: "https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap",
-  },
-];
+export default function App() {
+  const [user, setUser] = useState<any>(null);
+  const [nombreUsuario, setNombreUsuario] = useState(""); // Nuevo estado para el nombre real
+  const navigate = useNavigate();
 
-export function Layout({ children }: { children: React.ReactNode }) {
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      setUser(currentUser);
+      
+      if (currentUser) {
+        // Si hay usuario, buscamos su nombre en la colección "duenos"
+        const docRef = doc(db, "duenos", currentUser.uid);
+        const docSnap = await getDoc(docRef);
+        
+        if (docSnap.exists()) {
+          const nombreCompleto = docSnap.data().nombre;
+          // Tomamos solo la primera palabra (el primer nombre)
+          setNombreUsuario(nombreCompleto.split(" ")[0]);
+        }
+      } else {
+        setNombreUsuario("");
+      }
+    });
+    return () => unsubscribe();
+  }, []);
+
+  const handleLogout = async () => {
+    await signOut(auth);
+    navigate("/");
+  };
+
   return (
-    <html lang="en">
+    <html lang="es">
       <head>
         <meta charSet="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <Meta />
         <Links />
       </head>
       <body>
-        {children}
+        <nav className="navbar">
+          <div className="nav-container">
+            <Link to="/" className="logo">🐾 PawConnect</Link>
+            <div className="nav-links">
+              {user ? (
+                <>
+                  <span style={{ fontWeight: 'bold', color: '#4f46e5' }}>
+                    Hola, {nombreUsuario || "propietario"} {/* Mostramos el nombre real */}
+                  </span>
+                  <button onClick={handleLogout} className="btn-sitter">Salir</button>
+                </>
+              ) : (
+                <>
+                  <Link to="/login" className="btn-user" style={{ marginRight: '10px' }}>Entrar</Link>
+                  <Link to="/registro-usuario" className="btn-user">Registrarme</Link>
+                  <Link to="/registro-cuidador" className="btn-sitter">Prestar servicios</Link>       
+                </>
+              )}
+            </div>
+          </div>
+        </nav>
+        
+        <main className="main-content">
+          <Outlet />
+        </main>
+
         <ScrollRestoration />
         <Scripts />
       </body>
     </html>
-  );
-}
-
-export default function App() {
-  return <Outlet />;
-}
-
-export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
-  let message = "Oops!";
-  let details = "An unexpected error occurred.";
-  let stack: string | undefined;
-
-  if (isRouteErrorResponse(error)) {
-    message = error.status === 404 ? "404" : "Error";
-    details =
-      error.status === 404
-        ? "The requested page could not be found."
-        : error.statusText || details;
-  } else if (import.meta.env.DEV && error && error instanceof Error) {
-    details = error.message;
-    stack = error.stack;
-  }
-
-  return (
-    <main className="pt-16 p-4 container mx-auto">
-      <h1>{message}</h1>
-      <p>{details}</p>
-      {stack && (
-        <pre className="w-full p-4 overflow-x-auto">
-          <code>{stack}</code>
-        </pre>
-      )}
-    </main>
   );
 }
