@@ -1,11 +1,30 @@
-:root { font-family: 'Inter', sans-serif; }
-body { margin: 0; background-color: #f9fafb; color: #1f2937; }
 
+/* app.css  */
+
+:root {
+  /* Paleta Oficial PAKAL */
+  --pakal-blue: #3B82F6;
+  --pakal-cyan: #06B6D4;
+  --pakal-mint: #A7F3D0;
+  --pakal-lavender: #E0E7FF;
+  --pakal-white: #F8FAFC;
+  --pakal-dark: #0F172A; /* Basado en el color de la tipografía Pakal */
+  
+  /* Tipografía sugerida: Satoshi (o Inter como fallback) */
+
+  font-family: 'Roboto', sans-serif;
+}
+
+/* Aplicación de colores a elementos globales */
+body {
+  background-color: var(--pakal-white);
+  color: var(--pakal-dark);
+}
 /* --- Navegación --- */
 .navbar {
-  background: white;
-  padding: 1rem 2rem;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  background: var(--pakal-white);
+  padding: 1rem 5rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.08);
   position: sticky; top: 0; z-index: 100;
 }
 
@@ -15,23 +34,23 @@ body { margin: 0; background-color: #f9fafb; color: #1f2937; }
 }
 
 .logo { 
-  display: flex; align-items: center; gap: 0.5rem; 
-  text-decoration: none; color: #4f46e5; font-weight: 800; font-size: 1.5rem;
+  display: flex; align-items: center; gap: 0.3rem; 
+  text-decoration: none; color: var(--pakal-cyan); font-weight: 800; font-size: 1.25rem;
 }
 
-.nav-links { display: flex; gap: 1.5rem; align-items: center; }
+.nav-links { display: flex; gap: 1rem; align-items: center; }
 .nav-links a { text-decoration: none; color: #4b5563; font-weight: 500; transition: color 0.2s; }
-.nav-links a:hover { color: #4f46e5; }
+.nav-links a:hover { color: var(--pakal-blue); }
 
 .btn-user, .btn-sitter { 
   padding: 0.5rem 1rem; 
   border-radius: 8px; 
-  font-weight: 600;
+  font-weight: 800;
   transition: transform 0.2s;
 }
 
-.btn-user { background: #4f46e5; color: white !important; }
-.btn-sitter { border: 2px solid #4f46e5; color: #4f46e5 !important; }
+.btn-user { background: var(--pakal-cyan); color: var(--pakal-white) !important; }
+.btn-sitter { border: 2px solid var(--pakal-cyan); color: var(--pakal-cyan) !important; }
 .btn-user:hover, .btn-sitter:hover { transform: translateY(-2px); }
 
 /* --- Layout --- */
@@ -46,12 +65,12 @@ body { margin: 0; background-color: #f9fafb; color: #1f2937; }
   margin-top: 1rem;
 }
 
-.hero-text h1 { font-size: 3rem; color: #1e1b4b; margin-bottom: 1rem; }
-.hero-text p { font-size: 1.25rem; color: #4b5563; margin-bottom: 3rem; }
+.hero-text h1 { font-size: 3rem; color: var(--pakal-dark); margin-bottom: 1rem; }
+.hero-text h3 { font-size: 2rem; color: var(--pakal-cyan); margin-bottom: 3rem; }
 
 /* --- Buscador --- */
 .search-box {
-  background: white;
+  background: var(--pakal-white);
   padding: 0.75rem;
   border-radius: 100px;
   box-shadow: 0 10px 25px rgba(0,0,0,0.1);
@@ -68,7 +87,7 @@ body { margin: 0; background-color: #f9fafb; color: #1f2937; }
   gap: 0.5rem;
   flex: 1;
   padding: 0.5rem 1.25rem;
-  border-right: 1px solid #e5e7eb;
+  border-right: 1px solid var(--pakal-light);
   cursor: pointer;
 }
 
@@ -108,7 +127,7 @@ body { margin: 0; background-color: #f9fafb; color: #1f2937; }
 .info-card p { color: #6b7280; margin: 0; }
 
 /* --- Responsivo --- */
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .hero-text h1 { font-size: 2.2rem; }
   .search-box { 
     flex-direction: column; 
@@ -147,16 +166,6 @@ body { margin: 0; background-color: #f9fafb; color: #1f2937; }
 
 .logo:hover {
   opacity: 0.8; /* Un pequeño efecto visual al pasar el mouse */
-}
-
-.services-grid {
-  display: grid;
-  /* Aumentamos el tamaño mínimo de 250px a 320px para que sean más anchas */
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); 
-  gap: 3rem; /* Aumentamos el espacio entre tarjetas de 2rem a 3rem */
-  padding: 2rem;
-  max-width: 1400px; /* Evita que se estiren infinito en pantallas muy grandes */
-  margin: 0 auto;    /* Centra la cuadrícula */
 }
 
 .service-card {
@@ -243,12 +252,9 @@ body { margin: 0; background-color: #f9fafb; color: #1f2937; }
 .service-card-image {
   height: 450px;
   border-radius: 24px;
-  background-size: cover;
-  background-position: center;
   position: relative;
   overflow: hidden;
   display: flex;
-  /* CAMBIO CLAVE: Alineamos el contenido al inicio (arriba) */
   align-items: flex-start; 
   transition: all 0.4s ease;
   box-shadow: 0 10px 20px rgba(0,0,0,0.1);
@@ -329,4 +335,98 @@ body { margin: 0; background-color: #f9fafb; color: #1f2937; }
 }
 .btn-close-video:hover {
   background: rgba(0,0,0,0.9);
+}
+
+/* NUEVO: Para que el <img> funcione como fondo */
+.card-bg-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+}
+
+/* MODIFICA: Agrega z-index para que el texto quede encima */
+.service-overlay {
+  position: relative; /* ← AGREGA ESTA LÍNEA */
+  z-index: 1;         /* ← AGREGA ESTA LÍNEA */
+  background: linear-gradient(rgba(0, 0, 0, 0.9), transparent); 
+  width: 100%;
+  padding: 2rem;
+  color: white;
+  text-align: center;
+}
+/* --- BASE: Desktop primero --- */
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* Desktop: 3 columnas */
+  gap: 3rem;
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 3rem auto 0;
+  justify-items: center;
+}
+
+.perspective {
+  width: 100%; /* Desktop: 100% del grid cell */
+  max-width: 400px; /* Tope para que no se hagan gigantes */
+  height: 580px;
+}
+
+.service-card-image {
+  width: 100%;
+  height: 580px;
+  object-fit: cover;
+  border-radius: 20px;
+}
+
+/* --- TABLET: 2 columnas --- */
+@media only screen and (max-width: 1099px) and (min-width: 768px) {
+  .services-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+  }
+}
+
+/* --- MÓVIL: 1 columna grande --- */
+@media only screen and (max-width: 767px) {
+  body {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .main-content {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .home-wrapper {
+    padding: 0.5rem 0 !important;
+    text-align: center;
+  }
+
+  .hero-text {
+    padding: 0 1rem !important;
+    margin-bottom: 1.5rem !important;
+  }
+
+  .services-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1.5rem !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .perspective {
+    width: calc(100vw - 16px) !important; /* Solo en móvil */
+    max-width: 500px !important;
+    height: 480px !important;
+  }
+
+  .service-card-image {
+    height: 480px !important;
+  }
 }

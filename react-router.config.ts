@@ -1,7 +1,12 @@
 import type { Config } from "@react-router/dev/config";
 
 export default {
-  // Config options...
-  // Server-side render by default, to enable SPA mode set this to `false`
-  ssr: true,
+  // Desactivamos el renderizado en el servidor
+  ssr: false,
+  
+  // Forzamos la creación del index.html para la ruta principal
+  // Esto es lo que cPanel necesita para arrancar la app
+  async prerender() {
+    return ["/"];
+  },
 } satisfies Config;

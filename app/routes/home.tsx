@@ -6,39 +6,45 @@ export default function Home() {
   const services = [
     { 
       title: "Paseo", 
-      img: "paseo.png",
+      img: "./images/paseo.webp",
+      imgSmall: "./images/paseo-400.webp", // versión 400px para móvil
       desc: "Caminatas activas para mantener a tu mascota saludable y feliz.",
-      videoId: "dQw4w9WgXcQ" // Cambia por tu ID real de YouTube
+      videoId: "fjgJX6S4Q3U"
     },
     { 
       title: "Estética", 
-      img: "estetica.png",
+      img: "./images/estetica.webp",
+      imgSmall: "./images/estetica-400.webp",
       desc: "Baño, corte y mimos para que luzca siempre espectacular.",
-      videoId: "dQw4w9WgXcQ" // Cambia por tu ID real
+      videoId: "yX_g5UouW3w"
     },
     { 
       title: "Adiestramiento", 
-      img: "adiestramiento.png",
+      img: "./images/adiestramiento.webp",
+      imgSmall: "./images/adiestramiento-400.webp",
       desc: "Educación profesional con refuerzo positivo para una mejor convivencia.",
-      videoId: "dQw4w9WgXcQ"
+      videoId: "SgXGs8gaRXg"
     },
     { 
       title: "Alojamiento", 
-      img: "alojamiento.png",
+      img: "./images/alojamiento.webp",
+      imgSmall: "./images/alojamiento-400.webp",
       desc: "Cuidado las 24 horas en un ambiente familiar y seguro.",
-      videoId: "dQw4w9WgXcQ"
+      videoId: "gPFwEx6DhW8"
     },
     { 
       title: "Veterinario", 
-      img: "veterinario.png",
+      img: "./images/veterinario.webp",
+      imgSmall: "./images/veterinario-400.webp",
       desc: "Atención médica profesional, vacunas y chequeos para su salud.",
-      videoId: "dQw4w9WgXcQ"
+      videoId: "TT0GmtrnUbU"
     },
     { 
       title: "Cremación", 
-      img: "cremacion.png",
+      img: "./images/cremacion.webp",
+      imgSmall: "./images/cremacion-400.webp",
       desc: "Un adiós digno y respetuoso para acompañarte en momentos difíciles.",
-      videoId: "dQw4w9WgXcQ"
+      videoId: "wEapv4aUERY"
     },
   ];
 
@@ -54,7 +60,6 @@ export default function Home() {
         try {
           const data = JSON.parse(event.data);
           if (data.event === 'onStateChange' && data.info === 0) {
-            // 0 = video terminó
             setFlippedCard(null);
           }
         } catch (e) {}
@@ -67,10 +72,10 @@ export default function Home() {
   };
 
   return (
-    <div style={{ textAlign: 'center', padding: '2rem' }}>
+    <div className="home-wrapper">
       <section className="hero-text">
         <h1>El cuidado que tu mascota merece, cerca de ti 🐾</h1>
-        <p>Expertos listos para consentir a tu mejor amigo.</p>
+        <h3>Expertos listos para consentir a tu mejor amigo.</h3>
       </section>
 
       <div className="services-grid" style={{ marginTop: '3rem' }}>
@@ -81,16 +86,24 @@ export default function Home() {
             <div 
               key={i} 
               className="perspective" 
-              style={{ height: '450px', cursor: 'pointer' }}
+              style={{ height: '580px', cursor: 'pointer' }}
               onClick={() => handleFlip(i)}
             >
               <div className={`flip-card-inner ${isFlipped ? 'is-flipped' : ''}`}>
                 
-                {/* Frente: tu tarjeta actual */}
-                <div 
-                  className="flip-card-front service-card-image" 
-                  style={{ backgroundImage: `url(${s.img})` }}
-                >
+                {/* Frente: ahora con <img> + lazy */}
+                <div className="flip-card-front service-card-image">
+                  {!isFlipped && (
+                    <img
+                      src={s.imgSmall}
+                      srcSet={`${s.imgSmall} 400w, ${s.img} 800w`}
+                      sizes="(max-width: 768px) 400px, 800px"
+                      alt={s.title}
+                      loading={i === 0 ? "eager" : "lazy"} // La primera carga ya, las otras lazy
+                      decoding="async"
+                      className="card-bg-img"
+                    />
+                  )}
                   <div className="service-overlay">
                     <h3>{s.title}</h3>
                     <p>{s.desc}</p>

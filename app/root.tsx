@@ -41,12 +41,25 @@ export default function App() {
       <head>
         <meta charSet="utf-8" />
         <Meta />
+        <title>Pakalpets</title>
+        <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet"></link>
+        <link rel="icon" type="image/png" href="./images/favicon.png?v=2"></link>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <Links />
       </head>
+
       <body>
         <nav className="navbar">
           <div className="nav-container">
-            <Link to="/" className="logo">🐾 PawConnect</Link>
+            
+            <Link to="/" className="logo" style={{ textDecoration: 'none' }}>
+              <img 
+                src="/logo-compelto.webp" 
+                alt="Pakal Pets" 
+                style={{ height: '65px', width: 'auto', display: 'block' }} 
+              />
+            </Link>
+
             <div className="nav-links">
               {user ? (
                 <>
