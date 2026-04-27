@@ -1,14 +1,18 @@
 
 /* app.css  */
 
+@import "tailwindcss";
+
 :root {
   /* Paleta Oficial PAKAL */
+  /* Basado en el color de la tipografía Pakal */
   --pakal-blue: #3B82F6;
   --pakal-cyan: #06B6D4;
   --pakal-mint: #A7F3D0;
   --pakal-lavender: #E0E7FF;
   --pakal-white: #F8FAFC;
-  --pakal-dark: #0F172A; /* Basado en el color de la tipografía Pakal */
+  --pakal-dark: #0F172A; 
+  --pakal-gray: #b5bac2;
   
   /* Tipografía sugerida: Satoshi (o Inter como fallback) */
 
@@ -19,19 +23,33 @@
 body {
   background-color: var(--pakal-white);
   color: var(--pakal-dark);
-}
-/* --- Navegación --- */
-.navbar {
-  background: var(--pakal-white);
-  padding: 1rem 5rem;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.08);
-  position: sticky; top: 0; z-index: 100;
+  margin: 0;
 }
 
+/* --- Navegación --- */
+.navbar {
+            background: white;
+            padding: 0.5rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky; top: 0; z-index: 1000;
+          }
+
 .nav-container {
-  max-width: 1200px; margin: 0 auto;
+  max-width: 1400px; margin: 0 auto;
   display: flex; justify-content: space-between; align-items: center;
+  height: 70px;
 }
+
+/* BOTÓN HAMBURGUESA */
+.menu-toggle {
+  display: none; flex-direction: column; gap: 5px;
+  background: none; border: none; cursor: pointer; padding: 10px;
+}
+
+.bar {
+            width: 25px; height: 3px; background-color: var(--pakal-dark);
+            transition: 0.3s; border-radius: 2px;
+          }
 
 .logo { 
   display: flex; align-items: center; gap: 0.3rem; 
@@ -351,10 +369,10 @@ body {
 .service-overlay {
   position: relative; /* ← AGREGA ESTA LÍNEA */
   z-index: 1;         /* ← AGREGA ESTA LÍNEA */
-  background: linear-gradient(rgba(0, 0, 0, 0.9), transparent); 
+  background: linear-gradient(rgba(0, 0, 0, 0.95), transparent); /* Degradado más oscuro para mejor contraste */
   width: 100%;
   padding: 2rem;
-  color: white;
+  color: rgb(255, 255, 255);
   text-align: center;
 }
 /* --- BASE: Desktop primero --- */
@@ -391,6 +409,26 @@ body {
 
 /* --- MÓVIL: 1 columna grande --- */
 @media only screen and (max-width: 767px) {
+
+
+.menu-toggle { display: flex; }
+
+.hero-text h3 { font-size: 1.25rem; color: var(--pakal-cyan); margin-bottom: 3rem; }
+
+.nav-links {
+  position: fixed; top: 0; right: 0; height: 100vh; width: 280px;
+  background: white; flex-direction: column; padding: 5rem 2rem;
+  box-shadow: -10px 0 30px rgba(0,0,0,0.1);
+  transform: translateX(100%); z-index: 1050; transition: 0.3s;
+}
+
+.nav-links.active { transform: translateX(0); }
+
+.bar.open:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+.bar.open:nth-child(2) { opacity: 0; }
+.bar.open:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+
+
   body {
     margin: 0 !important;
     padding: 0 !important;
