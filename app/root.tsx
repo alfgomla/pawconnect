@@ -49,6 +49,7 @@ export default function App() {
       <body>
         <Nav />
         <main className="main-content">
+        {/* <main> */}
           <Outlet />
         </main>
         <Footer />

@@ -1,8 +1,11 @@
 .DS_Store
 .env
+.env.local
+.vscode
 /node_modules/
-
 # React Router
 /.react-router/
 /dist/
 /build/
+*.log
+npm-debug.log*

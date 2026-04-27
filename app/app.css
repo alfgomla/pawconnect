@@ -12,7 +12,7 @@
   --pakal-lavender: #E0E7FF;
   --pakal-white: #F8FAFC;
   --pakal-dark: #0F172A; 
-  --pakal-gray: #b5bac2;
+  --pakal-gray: #525151;
   
   /* Tipografía sugerida: Satoshi (o Inter como fallback) */
 
@@ -72,7 +72,9 @@ body {
 .btn-user:hover, .btn-sitter:hover { transform: translateY(-2px); }
 
 /* --- Layout --- */
-.main-content { max-width: 1200px; margin: 2rem auto; padding: 0 1rem; }
+.main-content { 
+  margin: 1rem 0; 
+ }
 
 /* --- Hero Section --- */
 .hero-container {
