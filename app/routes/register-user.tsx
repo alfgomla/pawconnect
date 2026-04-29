@@ -6,6 +6,7 @@ import { useNavigate } from "react-router";
 
 export default function RegisterUser() {
   const [email, setEmail] = useState("");
+  const [codigoPostal, setCodigoPostal] = useState("");
   const [password, setPassword] = useState("");
   const [nombre, setNombre] = useState("");
   const navigate = useNavigate();
@@ -21,6 +22,7 @@ export default function RegisterUser() {
       await setDoc(doc(db, "duenos", user.uid), {
         nombre: nombre,
         email: email,
+        codigoPostal: codigoPostal,
         tipo: "dueno",
         fechaRegistro: new Date().toLocaleDateString()
       });
@@ -48,6 +50,12 @@ export default function RegisterUser() {
           placeholder="Correo electrónico" 
           required 
           onChange={(e) => setEmail(e.target.value)} 
+        />
+        <input 
+          type="text" 
+          placeholder="Código Postal" 
+          required 
+          onChange={(e) => setCodigoPostal(e.target.value)} 
         />
         <input 
           type="password" 

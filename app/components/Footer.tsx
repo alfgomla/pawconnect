@@ -63,7 +63,7 @@ export default function Footer() {
         </div>
 
         {/* Línea divisora */}
-        <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm ">
+        <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm">
           <p>© {currentYear} PakalPets. Todos los derechos reservados.</p>
           <Link to="/cookies" className="hover:text-[#FF6A1F] transition-colors">Designer & Developer</Link>
           <div className="flex gap-6">

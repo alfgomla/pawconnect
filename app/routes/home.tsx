@@ -1,4 +1,5 @@
 import { Link } from "react-router";
+import { ServicesSection } from "../components/services"; // Importación clave
 
 export default function Home() {
   return (
@@ -38,7 +39,7 @@ export default function Home() {
                 Cuidamos a tu mascota como si fuera nuestra 🐾
               </h1>
               <p className="text-lg md:text-xl text-gray-200">
-                ¿Sales de la ciudad y no tienes donde dejar a tu mejor amigo? 
+                ¿<span className="text-cyan-500">Ocupado...</span> y no tienes donde dejar a tu mejor amigo? 
               </p>  
               <p className="text-lg md:text-xl text-gray-200">
                 guardería y paseos en Querétaro.
@@ -51,13 +52,22 @@ export default function Home() {
             {/* Botón abajo a la derecha */}
             <div className="absolute bottom-48 md:bottom-48 right-4 sm:right-6 lg:right-8">
               <Link
-                to="/registro-usuario"
-                className="inline-block bg-[var(--pakal-cyan)] hover:bg-[var(--pakal-blue)] text-white px-8 py-4 rounded-lg font-semibold text-lg transition-colors shadow-lg"
+                to="/login"
+                className="inline-block bg-[var(--pakal-cyan)] hover:bg-[var(--pakal-blue)] text-white px-20 py-4 rounded-lg font-semibold text-2xl transition-colors shadow-lg"
               >Agendar Estancia
               </Link>
             </div>
           </div>
+        </div>     
+      </section>
+
+      <section>
+        {/* Aquí es donde "llamas" a los servicios */}
+      <section className="bg-white py-12">
+        <div className="max-w-7xl mx-auto px-4">
+          <ServicesSection />
         </div>
+      </section>
       </section>
 
     </>

@@ -24,6 +24,20 @@ body {
   background-color: var(--pakal-white);
   color: var(--pakal-dark);
   margin: 0;
+} 
+body:has(.menu-overlay) {
+    overflow: hidden;
+}
+
+/* El overlay que detecta el clic fuera */
+.menu-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.3); /* Un fondo oscuro suave ayuda al usuario a ver que el fondo está inactivo */
+    z-index: 998; /* Un nivel debajo de .nav-links */
 }
 
 /* --- Navegación --- */
@@ -56,9 +70,39 @@ body {
   text-decoration: none; color: var(--pakal-cyan); font-weight: 800; font-size: 1.25rem;
 }
 
-.nav-links { display: flex; gap: 1rem; align-items: center; }
-.nav-links a { text-decoration: none; color: #4b5563; font-weight: 500; transition: color 0.2s; }
+.nav-links { 
+  display: flex; 
+  gap: 1rem; 
+  align-items: center; 
+  z-index: 999; 
+}
+
+.nav-links a { text-decoration: none; color: #4b5563; transition: color 0.2s; }
 .nav-links a:hover { color: var(--pakal-blue); }
+
+
+/* Contenedor de los enlaces en móvil */
+.nav-links.active {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Alinea los botones al centro horizontalmente */
+    padding: 2rem;
+    gap: 1.5rem; /* Espacio entre botones */
+    width: 80%; /* Asegura que el contenedor use el ancho asignado */
+}
+
+/* Estilo para que los botones ocupen el ancho */
+.nav-links.active .btn-user, 
+.nav-links.active .btn-sitter {
+    display: block; /* O inline-block */
+    width: 100%; /* O 100% si quieres que toquen los bordes del contenedor blanco */
+    text-align: center;
+    font-size: 1.45rem;
+    padding: 1rem 0; /* Aumenta el área de toque vertical */
+    box-sizing: border-box; /* Asegura que el padding no rompa el ancho del 100% */
+}
+
+
 
 .btn-user, .btn-sitter { 
   padding: 0.5rem 1rem; 

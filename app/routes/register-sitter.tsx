@@ -8,6 +8,7 @@ export default function RegisterSitter() {
   const [nombre, setNombre] = useState("");
   const [ciudad, setCiudad] = useState("");
   const [telefono, setTelefono] = useState("");
+  const [codigoPostal, setCodigoPostal] = useState("");
   const [servicios, setServicios] = useState<string[]>([]);
 
   const handleCheckboxChange = (servicio: string) => {
@@ -23,6 +24,7 @@ export default function RegisterSitter() {
         nombre,
         ciudad,
         telefono,
+        codigoPostal,
         servicios,
         fechaRegistro: new Date().toLocaleDateString(),
         rating: 5.0
@@ -48,6 +50,7 @@ export default function RegisterSitter() {
           <option value="Corregidora">Corregidora</option>
           <option value="Juriquilla">Juriquilla</option>
         </select>
+        <input placeholder="Código Postal" required onChange={e => setCodigoPostal(e.target.value)} />
 
         <input placeholder="Teléfono" type="tel" required onChange={e => setTelefono(e.target.value)} />
 

@@ -19,9 +19,20 @@ export default function Login() {
   };
 
   return (
-    <div className="container-form">
+    <div className="bg-slate-950 bg-[repeating-linear-gradient(45deg,transparent,transparent_10px,rgba(255,255,255,0.03)_10px,rgba(255,255,255,0.03)_20px)]">
       <h2>Prueba🐾</h2>
       <p>Entra para contactar a tus cuidadores favoritos.</p>
+      <p>Entra para contactar a tus cuidadores favoritos.</p>
+      <p>Entra para contactar a tus cuidadores favoritos.</p>
+      <p>Entra para contactar a tus cuidadores favoritos.</p>
+      <p>Entra para contactar a tus cuidadores favoritos.</p>
+      <p>Entra para contactar a tus cuidadores favoritos.</p>
+      <p>Entra para contactar a tus cuidadores favoritos.</p>
+      <p>Entra para contactar a tus cuidadores favoritos.</p>
+      <p>Entra para contactar a tus cuidadores favoritos.</p>
+      <p>Entra para contactar a tus cuidadores favoritos.</p>
+      <p>Entra para contactar a tus cuidadores favoritos.</p>
+      
       
     </div>
   );
