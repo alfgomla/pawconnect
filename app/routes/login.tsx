@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { auth } from "../lib/firebase";
+import { auth, db } from "../lib/firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { useNavigate, Link } from "react-router";
+import { doc, getDoc } from "firebase/firestore";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -10,10 +11,34 @@ export default function Login() {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+
+
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-      alert("¡Bienvenido de nuevo!");
-      navigate("/buscar");
+
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      // 🔥 obtener datos del usuario
+      const docRef = doc(db, "usuarios", user.uid);
+      const docSnap = await getDoc(docRef);      
+
+
+      if (docSnap.exists()) {
+      const data = docSnap.data();
+
+      // redirección por tipo
+      if (data.tipo === "dueno") {
+        navigate("/perfil-dueno");
+      } else if (data.tipo === "cuidador") {
+        navigate("/perfil-cuidador");
+      } else {
+        navigate("/");
+      }
+    } else {
+      alert("No se encontró el perfil del usuario");
+    }
+
+
     } catch (error: any) {
       alert("Error al entrar: " + error.message);
     }
@@ -39,7 +64,7 @@ export default function Login() {
         <button type="submit" className="btn-user">Entrar</button>
         
         <p style={{ fontSize: '0.9rem', marginTop: '1rem' }}>
-          ¿No tienes cuenta? <Link to="/registro-usuario" style={{ color: '#4f46e5' }}>Regístrate aquí</Link>
+          ¿No tienes cuenta? <Link to="/registro-dueno" style={{ color: '#4f46e5' }}>Regístrate aquí</Link>
         </p>
       </form>
     </div>

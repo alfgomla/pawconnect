@@ -12,6 +12,7 @@
   --pakal-lavender: #E0E7FF;
   --pakal-white: #F8FAFC;
   --pakal-dark: #0F172A; 
+  --pakal-light: #e5e7eb;
   --pakal-gray: #525151;
   
   /* Tipografía sugerida: Satoshi (o Inter como fallback) */
@@ -65,10 +66,10 @@ body:has(.menu-overlay) {
             transition: 0.3s; border-radius: 2px;
           }
 
-.logo { 
+/* .logo { 
   display: flex; align-items: center; gap: 0.3rem; 
   text-decoration: none; color: var(--pakal-cyan); font-weight: 800; font-size: 1.25rem;
-}
+} */
 
 .nav-links { 
   display: flex; 

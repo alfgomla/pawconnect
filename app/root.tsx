@@ -6,6 +6,7 @@ import { onAuthStateChanged, signOut } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore"; // Para buscar el nombre
 import { Links, Meta, Outlet, Scripts, ScrollRestoration, useNavigate } from "react-router";
 import "./app.css";
+import { AuthProvider } from "./context/AuthContext";
 
 export default function App() {
   const [user, setUser] = useState<any>(null);
@@ -47,11 +48,12 @@ export default function App() {
       </head>
 
       <body>
-        <Nav />
-        <main className="main-content">
-        {/* <main> */}
-          <Outlet />
-        </main>
+        <AuthProvider>
+          <Nav />
+          <main className="main-content">
+            <Outlet />
+          </main>
+        </AuthProvider>
         <Footer />
         <ScrollRestoration />
         <Scripts />

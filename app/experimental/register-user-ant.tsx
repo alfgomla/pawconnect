@@ -1,15 +1,15 @@
 import { useState } from "react";
 import { auth, db } from "../lib/firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { doc, setDoc, serverTimestamp } from "firebase/firestore";
+import { doc, setDoc } from "firebase/firestore";
 import { useNavigate } from "react-router";
 
-export default function RegisterSitter() {
-  const [nombre, setNombre] = useState("");
+export default function RegisterUser() {
   const [email, setEmail] = useState("");
+  const [codigoPostal, setCodigoPostal] = useState("");
   const [password, setPassword] = useState("");
+  const [nombre, setNombre] = useState("");
   const navigate = useNavigate();
-  
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -17,48 +17,45 @@ export default function RegisterSitter() {
       // 1. Creamos el usuario en Authentication
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
-      const uid   = user.uid;
 
-      // 2. Guardamos sus datos adicionales en una nueva colección "cuidadores"
-      await setDoc(doc(db, "usuarios", uid), {
+      // 2. Guardamos sus datos adicionales en una nueva colección "duenos"
+      await setDoc(doc(db, "usuarios", user.uid), {
         nombre: nombre,
         email: email,
-        tipo: "cuidador",
-        fechaRegistro: serverTimestamp()
+        codigoPostal: codigoPostal,
+        tipo: "dueno",
+        fechaRegistro: new Date().toLocaleDateString()
       });
 
-      alert("¡Cuenta de cuidador creada con éxito!");
-      navigate("/perfil-cuidador");
+      alert("¡Cuenta de dueño creada con éxito!");
+      navigate("/buscar");
     } catch (error: any) {
       alert("Error al registrarse: " + error.message);
     }
   };
 
-  function capitalizarNombre(nombre: string) {
-  return nombre
-    .toLowerCase()
-    .split(" ")
-    .map(p => p.charAt(0).toUpperCase() + p.slice(1))
-    .join(" ");
-  };
-
   return (
     <div className="container-form">
-      <h2>Crea tu cuenta de <span className="text-cyan-500">Cuidador</span> 🐾</h2>
-      <p>Regístrate para te contacten como cuidador en Querétaro.</p>
+      <h2>Crea tu cuenta de Dueño 🐾</h2>
+      <p>Regístrate para contactar a los mejores cuidadores de Querétaro.</p>
       <form onSubmit={handleRegister} className="card-form">
         <input 
           type="text" 
           placeholder="Tu Nombre" 
           required 
-          style={{ textTransform: "uppercase" }}
-          onChange={(e) => setNombre(e.target.value.toUpperCase().trim())}
+          onChange={(e) => setNombre(e.target.value)} 
         />
         <input 
           type="email" 
           placeholder="Correo electrónico" 
           required 
           onChange={(e) => setEmail(e.target.value)} 
+        />
+        <input 
+          type="text" 
+          placeholder="Código Postal" 
+          required 
+          onChange={(e) => setCodigoPostal(e.target.value)} 
         />
         <input 
           type="password" 

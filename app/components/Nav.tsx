@@ -1,18 +1,30 @@
-
 import { Link, useNavigate} from "react-router";
 import { useState } from "react";
 import { auth } from "../lib/firebase";
 import {signOut } from "firebase/auth";
+import { useAuth } from "../context/AuthContext";
 
 export default function Nav() {
-    const [user, setUser] = useState<any>(null);
-    const [nombreUsuario, setNombreUsuario] = useState(""); // Nuevo estado para el nombre real
+    const { user, profile, loading  } = useAuth();
+
     const navigate = useNavigate();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     const handleLogout = async () => {
         await signOut(auth);
         navigate("/");
+    };
+    
+    const primerNombre = profile?.nombre ? capitalizarNombre(profile.nombre).split(" ")[0]: "Usuario";
+    
+    if (loading) return null; // evita parpadeos
+    
+    function capitalizarNombre(nombre: string) {
+    return nombre
+        .toLowerCase()
+        .split(" ")
+        .map(p => p.charAt(0).toUpperCase() + p.slice(1))
+        .join(" ");
     };
 
     return (
@@ -48,9 +60,10 @@ export default function Nav() {
 
                 {/* LINKS DEL MENÚ */}
                 <div className={`nav-links ${isMenuOpen ? "active" : ""}`}>
-                    {user && !user.isAnonymous ? (
+                    {user ? (
                         <>
-                            <span className="welcome-msg">Hola, {nombreUsuario || "propietario"}</span>
+                            
+                            <span className="welcome-msg">Hola, {primerNombre}</span>
                             <button onClick={handleLogout} className="btn-sitter">Salir</button>
                         </>
                     ) : (

@@ -1,14 +1,13 @@
 import { useState } from "react";
 import { auth, db } from "../lib/firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 import { useNavigate } from "react-router";
 
-export default function RegisterUser() {
-  const [email, setEmail] = useState("");
-  const [codigoPostal, setCodigoPostal] = useState("");
-  const [password, setPassword] = useState("");
+export default function RegisterOwner() {
   const [nombre, setNombre] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
   const handleRegister = async (e: React.FormEvent) => {
@@ -17,18 +16,17 @@ export default function RegisterUser() {
       // 1. Creamos el usuario en Authentication
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
-
+      const uid   = user.uid;
       // 2. Guardamos sus datos adicionales en una nueva colección "duenos"
-      await setDoc(doc(db, "duenos", user.uid), {
+      await setDoc(doc(db, "usuarios", uid), {
         nombre: nombre,
         email: email,
-        codigoPostal: codigoPostal,
         tipo: "dueno",
-        fechaRegistro: new Date().toLocaleDateString()
+        fechaRegistro: serverTimestamp()
       });
 
       alert("¡Cuenta de dueño creada con éxito!");
-      navigate("/buscar");
+      navigate("/perfil-dueno");
     } catch (error: any) {
       alert("Error al registrarse: " + error.message);
     }
@@ -36,26 +34,21 @@ export default function RegisterUser() {
 
   return (
     <div className="container-form">
-      <h2>Crea tu cuenta de Dueño 🐾</h2>
+      <h2>Crea tu cuenta de <span className="text-cyan-500">Dueño</span> 🐾</h2>
       <p>Regístrate para contactar a los mejores cuidadores de Querétaro.</p>
       <form onSubmit={handleRegister} className="card-form">
         <input 
           type="text" 
           placeholder="Tu Nombre" 
           required 
-          onChange={(e) => setNombre(e.target.value)} 
+          style={{ textTransform: "uppercase" }}
+          onChange={(e) => setNombre(e.target.value.toUpperCase().trim())}
         />
         <input 
           type="email" 
           placeholder="Correo electrónico" 
           required 
           onChange={(e) => setEmail(e.target.value)} 
-        />
-        <input 
-          type="text" 
-          placeholder="Código Postal" 
-          required 
-          onChange={(e) => setCodigoPostal(e.target.value)} 
         />
         <input 
           type="password" 
