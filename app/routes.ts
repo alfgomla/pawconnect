@@ -10,4 +10,5 @@ export default [
   route("perfil-cuidador", "routes/perfil-cuidador.tsx"),
   route("perfil-dueno", "routes/perfil-dueno.tsx"),
   route("prueba", "routes/prueba.tsx"),
+  route("editar-cuidador", "routes/editar-cuidador.tsx"),
 ] satisfies RouteConfig;
