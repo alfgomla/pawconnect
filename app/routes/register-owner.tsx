@@ -2,7 +2,7 @@ import { useState } from "react";
 import { auth, db } from "../lib/firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc, serverTimestamp } from "firebase/firestore";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 
 export default function RegisterOwner() {
   const [nombre, setNombre] = useState("");
@@ -28,7 +28,13 @@ export default function RegisterOwner() {
       alert("¡Cuenta de dueño creada con éxito!");
       navigate("/perfil-dueno");
     } catch (error: any) {
-      alert("Error al registrarse: " + error.message);
+      if (error.code === "auth/email-already-in-use") {
+        alert("Este correo ya esta registrado. Inicia sesion para continuar.");
+        navigate("/login");
+        return;
+      }
+
+      alert("No pudimos crear tu cuenta. Revisa tus datos e intenta de nuevo.");
     }
   };
 
@@ -58,6 +64,9 @@ export default function RegisterOwner() {
         />
         <button type="submit" className="btn-user">Registrarme</button>
       </form>
+      <p style={{ fontSize: '0.9rem', marginTop: '1rem' }}>
+          ¿Quieres prestar tus servicios? <Link to="/registro-cuidador" style={{ color: '#4f46e5' }}>Regístrate aquí</Link>
+      </p>
     </div>
   );
 }

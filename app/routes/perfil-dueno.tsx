@@ -24,17 +24,15 @@ export default function perfilDueno() {
     <ProtectedRoute allowedRoles={["dueno"]}>
       <div>
         <h2>Perfil del usuario</h2>
-        <p>Entra para contactar a tus cuidadores favoritos.</p>
-        <p>Entra para contactar a tus cuidadores favoritos.</p>
-        <p>Entra para contactar a tus cuidadores favoritos.</p>
-        <p>Entra para contactar a tus cuidadores favoritos.</p>
-        <p>Entra para contactar a tus cuidadores favoritos.</p>
-        <p>Entra para contactar a tus cuidadores favoritos.</p>
-        <p>Entra para contactar a tus cuidadores favoritos.</p>
-        <p>Entra para contactar a tus cuidadores favoritos.</p>
-        <p>Entra para contactar a tus cuidadores favoritos.</p>
-        <p>Entra para contactar a tus cuidadores favoritos.</p>
-        <p>Entra para contactar a tus cuidadores favoritos.</p>
+        <p>En contrucción...</p>
+        <p>En contrucción...</p>
+        <p>En contrucción...</p>
+        <p>En contrucción...</p>
+        <p>En contrucción...</p>
+        <p>En contrucción...</p>
+        <p>En contrucción...</p>
+        <p>En contrucción...</p>
+        <p>En contrucción...</p>
       </div>
     </ProtectedRoute>
   );

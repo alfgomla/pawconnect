@@ -45,9 +45,9 @@ export default function Footer() {
           <div>
             <h3 className="text-white font-semibold mb-4">Servicios</h3>
             <ul className="space-y-2 text-sm">
-              <li><Link to="/servicios/paseo" className="hover:text-[var(--pakal-lavender)] transition-colors">Paseo</Link></li>
-              <li><Link to="/servicios/entrenamiento" className="hover:text-[var(--pakal-lavender)] transition-colors">Entrenamiento</Link></li>
-              <li><Link to="/servicios/guarderia" className="hover:text-[var(--pakal-lavender)] transition-colors">Guardería</Link></li>
+              <li><Link to="/login" className="hover:text-[var(--pakal-lavender)] transition-colors">Paseo</Link></li>
+              <li><Link to="/login" className="hover:text-[var(--pakal-lavender)] transition-colors">Entrenamiento</Link></li>
+              <li><Link to="/login" className="hover:text-[var(--pakal-lavender)] transition-colors">Guardería</Link></li>
             </ul>
           </div>
 
@@ -65,7 +65,7 @@ export default function Footer() {
         {/* Línea divisora */}
         <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm">
           <p>© {currentYear} PakalPets. Todos los derechos reservados.</p>
-          <Link to="/cookies" className="hover:text-[#FF6A1F] transition-colors">Designer & Developer</Link>
+          <Link to="https://alfgomla.github.io/alfgomla/" target="_blank" className="hover:text-[#FF6A1F] transition-colors">Designer & Developer</Link>
           <div className="flex gap-6">
             <Link to="/privacidad" className="hover:text-[#FF6A1F] transition-colors">Privacidad</Link>
             <Link to="/terminos" className="hover:text-[#FF6A1F] transition-colors">Términos</Link>

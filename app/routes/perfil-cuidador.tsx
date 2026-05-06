@@ -19,6 +19,8 @@ export default function PerfilCuidador() {
   const [ciudad, setCiudad] = useState("");
   const [fotoPerfil, setFotoPerfil] = useState("");
   const [codigoPostal, setCodigoPostal] = useState("");
+   const [servicios, setServicios] = useState<string[]>([]);
+  const [rating, setRating] = useState(0);
   const isComplete = "";
 
   // 🔥 Cargar datos
@@ -40,6 +42,9 @@ export default function PerfilCuidador() {
                 setCiudad(data.ciudad || "");
                 setFotoPerfil(data.fotoPerfil || "");
                 setCodigoPostal(data.codigoPostal || "");
+                setServicios(data.servicios || []);
+                setRating(data.rating || 0);
+                setCodigoPostal(data.codigoPostal || "");
             }
             setLoading(false);
         };
@@ -60,20 +65,42 @@ export default function PerfilCuidador() {
           <div className="relative inline-block">
             <img
               src={fotoPerfil || "/images/default-user.png"}
-              className="w-28 h-28 rounded-full mx-auto object-cover border-4 border-white shadow"/>     
+              className="w-36 h-36 rounded-full mx-auto object-cover border-4 border-white shadow"/>     
           </div>
 
           {/* NOMBRE */}
           <h2 className="text-xl font-bold mt-3">{nombre || "Tu nombre"}</h2>
-          {/* ciudad */}    
-          <p className="text-gray-500">{ciudad || "Tu ciudad"}</p>
-
+          
         </div>
 
         {/* DESCRIPCIÓN */}
         <div className="bg-white rounded-2xl shadow p-6 mt-4">
           <h3 className="font-semibold mb-2">Sobre mí</h3>
           <p className="text-gray-500">{descripcion || "Escribe sobre ti..."}</p>
+        </div>
+
+        {/* SERVICIOS */}
+        <div className="bg-white rounded-2xl shadow p-6 mt-4">
+          <h3 className="font-semibold mb-2">Los servicios con los que contamos:</h3>
+          <p className="text-gray-500">{servicios[0]}</p>
+          <p className="text-gray-500">{servicios[1]}</p>
+          <p className="text-gray-500">{servicios[2]}</p>
+          <p className="text-gray-500">{servicios[3]}</p>
+          <p className="text-gray-500">{servicios[4]}</p>
+          <p className="text-gray-500">{servicios[5]}</p>
+        </div>
+
+        <div className="bg-white rounded-2xl shadow p-6 mt-4">
+          <h3 className="font-semibold mb-2">Calificacion de los clientes:</h3>
+          <p className="text-gray-500">{rating.toFixed(1)}</p>
+        </div>
+
+        <div className="bg-white rounded-2xl shadow p-6 mt-4">
+          <h3 className="font-semibold mb-2">Contactame:</h3>
+          <p className="text-gray-500">Celular: {telefono || "Tu teléfono"}</p>
+          <p className="text-gray-500">Correo: {user?.email || "Tu correo"}</p>
+          <p className="text-gray-500">Código Postal: {codigoPostal || "Tu código postal"}</p>
+          <p className="text-gray-500">Ciudad: {ciudad || "Tu ciudad"}</p>
         </div>
 
           {/* BOTÓN */}

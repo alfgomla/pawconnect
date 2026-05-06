@@ -11,8 +11,8 @@ export default function Nav() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     const handleLogout = async () => {
-        await signOut(auth);
         navigate("/");
+        await signOut(auth);
     };
     
     const primerNombre = profile?.nombre ? capitalizarNombre(profile.nombre).split(" ")[0]: "Usuario";
@@ -71,7 +71,7 @@ export default function Nav() {
                             {/* Te recomiendo agregar "Inicio" aquí también 
                             <Link to="/" className="btn-user" onClick={() => setIsMenuOpen(false)}>Inicio</Link> */}
                             <Link to="/login" className="btn-user" onClick={() => setIsMenuOpen(false)}>Entrar</Link>
-                            <Link to="/registro-usuario" className="btn-user" onClick={() => setIsMenuOpen(false)}>Registrarme</Link>
+                            <Link to="/registro-dueno" className="btn-user" onClick={() => setIsMenuOpen(false)}>Registrarme</Link>
                             <Link to="/registro-cuidador" className="btn-sitter" onClick={() => setIsMenuOpen(false)}>Prestar servicios</Link>       
                         </>
                     )}

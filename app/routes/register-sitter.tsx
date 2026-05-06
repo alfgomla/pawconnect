@@ -2,7 +2,7 @@ import { useState } from "react";
 import { auth, db } from "../lib/firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc, serverTimestamp } from "firebase/firestore";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 
 export default function RegisterSitter() {
   const [nombre, setNombre] = useState("");
@@ -30,16 +30,14 @@ export default function RegisterSitter() {
       alert("¡Cuenta de cuidador creada con éxito!");
       navigate("/perfil-cuidador");
     } catch (error: any) {
-      alert("Error al registrarse: " + error.message);
-    }
-  };
+      if (error.code === "auth/email-already-in-use") {
+        alert("Este correo ya esta registrado. Inicia sesion para continuar.");
+        navigate("/login");
+        return;
+      }
 
-  function capitalizarNombre(nombre: string) {
-  return nombre
-    .toLowerCase()
-    .split(" ")
-    .map(p => p.charAt(0).toUpperCase() + p.slice(1))
-    .join(" ");
+      alert("No pudimos crear tu cuenta. Revisa tus datos e intenta de nuevo.");
+    }
   };
 
   return (
@@ -68,6 +66,9 @@ export default function RegisterSitter() {
         />
         <button type="submit" className="btn-user">Registrarme</button>
       </form>
+      <p style={{ fontSize: '0.9rem', marginTop: '1rem' }}>
+          ¿Tienes macota y buscas cuidador? <Link to="/registro-dueno" style={{ color: '#4f46e5' }}>Regístrate aquí</Link>
+        </p>
     </div>
   );
 }

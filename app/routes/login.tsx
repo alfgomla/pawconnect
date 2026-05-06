@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { auth, db } from "../lib/firebase";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { sendPasswordResetEmail, signInWithEmailAndPassword } from "firebase/auth";
 import { useNavigate, Link } from "react-router";
 import { doc, getDoc } from "firebase/firestore";
 
@@ -28,7 +28,7 @@ export default function Login() {
 
       // redirección por tipo
       if (data.tipo === "dueno") {
-        navigate("/perfil-dueno");
+        navigate("/buscar");
       } else if (data.tipo === "cuidador") {
         navigate("/perfil-cuidador");
       } else {
@@ -44,10 +44,36 @@ export default function Login() {
     }
   };
 
+  const handlePasswordReset = async () => {
+    const correo = email.trim() || prompt("Escribe el correo de tu cuenta")?.trim();
+
+    if (!correo) {
+      alert("Necesitamos tu correo para enviarte la recuperacion de contraseña.");
+      return;
+    }
+
+    try {
+      await sendPasswordResetEmail(auth, correo);
+      alert("Te enviamos un correo para restablecer tu contraseña. Revisa tu bandeja de entrada. no olvides revisar la carpeta de spam.");
+    } catch (error: any) {
+      if (error.code === "auth/user-not-found") {
+        alert("No encontramos una cuenta registrada con ese correo.");
+        return;
+      }
+
+      if (error.code === "auth/invalid-email") {
+        alert("El correo no tiene un formato valido.");
+        return;
+      }
+
+      alert("No pudimos enviar el correo de recuperacion. Intenta de nuevo.");
+    }
+  };
+
   return (
     <div className="container-form">
       <h2>Iniciar Sesión 🐾</h2>
-      <p>Entra para contactar a tus cuidadores favoritos.</p>
+      <p>para entrar a la aplicación.</p>
       <form onSubmit={handleLogin} className="card-form">
         <input 
           type="email" 
@@ -61,6 +87,22 @@ export default function Login() {
           required 
           onChange={(e) => setPassword(e.target.value)} 
         />
+        <button
+          type="button"
+          onClick={handlePasswordReset}
+          style={{
+            alignSelf: "flex-end",
+            background: "transparent",
+            border: "none",
+            color: "#4f46e5",
+            cursor: "pointer",
+            fontSize: "0.9rem",
+            fontWeight: 600,
+            padding: 0,
+          }}
+        >
+          Olvide mi contraseña
+        </button>
         <button type="submit" className="btn-user">Entrar</button>
         
         <p style={{ fontSize: '0.9rem', marginTop: '1rem' }}>
