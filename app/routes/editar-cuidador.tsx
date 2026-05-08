@@ -1,10 +1,116 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { auth, db, storage } from "../lib/firebase";
 import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { useAuth } from "../context/AuthContext";
 import ProtectedRoute from "../components/ProtectedRoute";
 import { useNavigate } from "react-router";
+
+const ubicacionDefault = {
+  latitud: 20.5888,
+  longitud: -100.3899,
+};
+
+type LocationPickerProps = {
+  latitud: string;
+  longitud: string;
+  onChange: (latitud: number, longitud: number) => void;
+};
+
+function LocationPicker({ latitud, longitud, onChange }: LocationPickerProps) {
+  const mapContainerRef = useRef<HTMLDivElement | null>(null);
+  const leafletRef = useRef<typeof import("leaflet") | null>(null);
+  const mapRef = useRef<import("leaflet").Map | null>(null);
+  const markerRef = useRef<import("leaflet").Marker | null>(null);
+
+  const latitudMapa = Number.isFinite(Number(latitud)) ? Number(latitud) : ubicacionDefault.latitud;
+  const longitudMapa = Number.isFinite(Number(longitud)) ? Number(longitud) : ubicacionDefault.longitud;
+
+  useEffect(() => {
+    if (!mapContainerRef.current || mapRef.current) return;
+
+    let isMounted = true;
+
+    const initMap = async () => {
+      const leaflet = await import("leaflet");
+      await import("leaflet/dist/leaflet.css");
+
+      if (!isMounted || !mapContainerRef.current || mapRef.current) return;
+
+    leafletRef.current = leaflet;
+
+    const pinIcon = leaflet.divIcon({
+      className: "",
+      html: `<div style="
+        width: 22px;
+        height: 22px;
+        border-radius: 999px 999px 999px 0;
+        background: #06b6d4;
+        border: 3px solid white;
+        box-shadow: 0 8px 18px rgba(0,0,0,.25);
+        transform: rotate(-45deg);
+      "></div>`,
+      iconSize: [28, 28],
+      iconAnchor: [14, 28],
+    });
+
+    const map = leaflet.map(mapContainerRef.current).setView([latitudMapa, longitudMapa], 13);
+
+    leaflet.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+    }).addTo(map);
+
+    const marker = leaflet.marker([latitudMapa, longitudMapa], {
+      draggable: true,
+      icon: pinIcon,
+    }).addTo(map);
+
+    marker.on("dragend", () => {
+      const position = marker.getLatLng();
+      onChange(position.lat, position.lng);
+    });
+
+    map.on("click", (event: import("leaflet").LeafletMouseEvent) => {
+      marker.setLatLng(event.latlng);
+      onChange(event.latlng.lat, event.latlng.lng);
+    });
+
+    mapRef.current = map;
+    markerRef.current = marker;
+    };
+
+    initMap();
+
+    return () => {
+      isMounted = false;
+      mapRef.current?.remove();
+      mapRef.current = null;
+      markerRef.current = null;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!leafletRef.current || !mapRef.current || !markerRef.current) return;
+
+    const nextPosition = leafletRef.current.latLng(latitudMapa, longitudMapa);
+    markerRef.current.setLatLng(nextPosition);
+    mapRef.current.setView(nextPosition, mapRef.current.getZoom());
+  }, [latitudMapa, longitudMapa]);
+
+  return (
+    <div
+      ref={mapContainerRef}
+      style={{
+        width: "100%",
+        aspectRatio: "1 / 1",
+        borderRadius: "16px",
+        overflow: "hidden",
+        border: "1px solid #e5e7eb",
+        background: "#f3f4f6",
+      }}
+    />
+  );
+}
 
 export default function PerfilCuidador() {
   const { user } = useAuth();
@@ -16,10 +122,13 @@ export default function PerfilCuidador() {
   const [descripcion, setDescripcion] = useState("");
   const [telefono, setTelefono] = useState("");
   const [ciudad, setCiudad] = useState("");
+  const [colonia, setColonia] = useState("");
   const [fotoPerfil, setFotoPerfil] = useState("");
   const [codigoPostal, setCodigoPostal] = useState("");
   const [servicios, setServicios] = useState<string[]>([]);
   const [rating, setRating] = useState(0);
+  const [latitud, setLatitud] = useState("");
+  const [longitud, setLongitud] = useState("");
 
   const handleCheckboxChange = (servicio: string) => {
     setServicios(prev => 
@@ -44,10 +153,13 @@ export default function PerfilCuidador() {
                 setDescripcion(data.descripcion || "");
                 setTelefono(data.telefono || "");
                 setCiudad(data.ciudad || "");
+                setColonia(data.colonia || ""); 
                 setFotoPerfil(data.fotoPerfil || "");
                 setCodigoPostal(data.codigoPostal || "");
                 setServicios(data.servicios || []);
                 setRating(data.rating || 0);
+                setLatitud(data.ubicacion?.latitud?.toString() || "");
+                setLongitud(data.ubicacion?.longitud?.toString() || "");
             }
             setLoading(false);
         };
@@ -66,19 +178,51 @@ export default function PerfilCuidador() {
     setFotoPerfil(url);
   };
 
+  const handleObtenerUbicacion = () => {
+    if (!navigator.geolocation) {
+      alert("Tu navegador no permite obtener la ubicacion.");
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setLatitud(position.coords.latitude.toString());
+        setLongitud(position.coords.longitude.toString());
+      },
+      () => {
+        alert("No pudimos obtener tu ubicacion. Revisa los permisos del navegador.");
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+      }
+    );
+  };
+
   // 🔥 Guardar perfil
   const handleSave = async () => {
         if (!uid) return;
+
+        const latitudNumero = Number(latitud);
+        const longitudNumero = Number(longitud);
+        const tieneUbicacion = Number.isFinite(latitudNumero) && Number.isFinite(longitudNumero);
 
         const perfilData = {
         nombre,
         descripcion,
         telefono,
         ciudad,
+        colonia,
         fotoPerfil,
         codigoPostal,
         servicios,
-        rating
+        rating,
+        ...(tieneUbicacion && {
+          ubicacion: {
+            latitud: latitudNumero,
+            longitud: longitudNumero,
+          },
+        }),
         };
 
         await setDoc(doc(db, "perfiles_cuidadores", uid), perfilData);
@@ -123,6 +267,7 @@ export default function PerfilCuidador() {
                 <input className="w-full border border-gray-300 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
                 placeholder="Nombre"
                 value={nombre}
+                style={{ textTransform: "uppercase" }}
                 onChange={(e) => setNombre(e.target.value)}
                 />
 
@@ -136,6 +281,15 @@ export default function PerfilCuidador() {
                     <option value="Corregidora">Corregidora</option>
                     <option value="Juriquilla">Juriquilla</option>
                 </select>
+
+                {/* colonia */}
+                <h3 className="font-semibold mb-2">Colonia</h3>
+                <input className="w-full border border-gray-300 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400" 
+                    placeholder="Colonia" 
+                    value={colonia}
+                    style={{ textTransform: "uppercase" }}
+                    onChange={(e) => setColonia(e.target.value)}
+                  />
 
                 {/* codigo postal */}
                 <h3 className="font-semibold mb-2">Codigo Postal</h3>
@@ -194,6 +348,53 @@ export default function PerfilCuidador() {
             </div>
 
             {/* BOTÓN */}
+            {/* UBICACION */}
+            <div className="bg-white rounded-2xl shadow p-6 mt-4">
+                <h3 className="font-semibold mb-2">Ubicacion</h3>
+                <p className="text-gray-500 mb-4">
+                    Coloca el pin de tu zona de servicio. Puedes usar tu ubicacion actual o escribir las coordenadas.
+                </p>
+
+                <LocationPicker
+                    latitud={latitud}
+                    longitud={longitud}
+                    onChange={(lat, lng) => {
+                        setLatitud(lat.toFixed(6));
+                        setLongitud(lng.toFixed(6));
+                    }}
+                />
+
+                <button
+                    type="button"
+                    onClick={handleObtenerUbicacion}
+                    className="btn-sitter w-full mt-4"
+                >
+                    Usar mi ubicacion actual
+                </button>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
+                    <div>
+                        <h3 className="font-semibold mb-2">Latitud</h3>
+                        <input
+                            className="w-full border border-gray-300 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+                            placeholder="20.5888"
+                            value={latitud}
+                            onChange={(e) => setLatitud(e.target.value)}
+                        />
+                    </div>
+
+                    <div>
+                        <h3 className="font-semibold mb-2">Longitud</h3>
+                        <input
+                            className="w-full border border-gray-300 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+                            placeholder="-100.3899"
+                            value={longitud}
+                            onChange={(e) => setLongitud(e.target.value)}
+                        />
+                    </div>
+                </div>
+            </div>
+
             <button
                 onClick={handleSave}
                 className="btn-user w-full mt-6"

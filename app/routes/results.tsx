@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router";
 import { db } from "../lib/firebase";
 import { collection, doc, getDoc, getDocs, query, where } from "firebase/firestore";
-import { ArrowLeft, MapPin, Phone, Star } from "lucide-react";
+import { ArrowLeft, Star, BookUser } from "lucide-react";
 
 type CuidadorResultado = {
   id: string;
@@ -15,6 +15,7 @@ type CuidadorResultado = {
   rating?: number;
   servicios?: string[];
   email?: string;
+  colonia?: string;
 };
 
 export default function Results() {
@@ -23,12 +24,11 @@ export default function Results() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  const codigoPostalBusqueda = searchParams.get("codigoPostal")?.trim() || "";
   const servicioBusqueda = searchParams.get("servicio") || "";
 
   useEffect(() => {
     const fetchCuidadores = async () => {
-      if (!codigoPostalBusqueda || !servicioBusqueda) {
+      if (!servicioBusqueda) {
         setCuidadores([]);
         setLoading(false);
         return;
@@ -40,7 +40,6 @@ export default function Results() {
       try {
         const cuidadoresQuery = query(
           collection(db, "perfiles_cuidadores"),
-          where("codigoPostal", "==", codigoPostalBusqueda),
           where("servicios", "array-contains", servicioBusqueda)
         );
 
@@ -57,6 +56,7 @@ export default function Results() {
               ...perfilData,
               email: usuarioData.email,
               nombre: perfilData.nombre || usuarioData.nombre,
+              colonia: perfilData.colonia || usuarioData.colonia,
             } as CuidadorResultado;
           })
         );
@@ -71,13 +71,13 @@ export default function Results() {
     };
 
     fetchCuidadores();
-  }, [codigoPostalBusqueda, servicioBusqueda]);
+  }, [servicioBusqueda]);
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-8">
       <section className="hero-text">
         <h2 style={{ padding: "2rem 0 0 0", textAlign: "center" }}>
-          Resultados para {servicioBusqueda || "servicio"} en CP {codigoPostalBusqueda || "---"}
+          Resultados para {servicioBusqueda || "servicio"}
         </h2>
       </section>
 
@@ -112,12 +112,8 @@ export default function Results() {
                 />
 
                 <div style={{ flex: "1 1 240px", minWidth: 0 }}>
-                  <h3 style={{ margin: 0 }}>{cuidador.nombre || "Cuidador Pakal Pets"}</h3>
-                  <p style={{ color: "#666", fontSize: "0.9rem", margin: "0.25rem 0" }}>
-                    <MapPin size={15} style={{ display: "inline", marginRight: "4px" }} />
-                    CP {cuidador.codigoPostal}
-                    {cuidador.ciudad ? `, ${cuidador.ciudad}` : ""}
-                  </p>
+                  <h3 style={{ color: "#4f46e5", fontWeight: "600", margin: 0 }}>{cuidador.nombre || "Cuidador Pakal Pets"}</h3>
+                  <p style={{ color: "var(--pakal-cyan)", fontSize: "0.95rem", margin: "0.5rem 0" }}>{cuidador.colonia || "Tu colonia"}</p>
                   {cuidador.descripcion && (
                     <p style={{ color: "#555", fontSize: "0.95rem", margin: "0.5rem 0" }}>
                       {cuidador.descripcion}
@@ -129,26 +125,20 @@ export default function Results() {
                   </div>
                 </div>
 
-                <div style={{ display: "grid", gap: "0.5rem", justifyItems: "end" }}>
-                  {cuidador.telefono && (
-                    <a
-                      href={`tel:${cuidador.telefono}`}
-                      className="btn-sitter"
+                <div className="result-profile-action">
+                  <Link
+                      to={`/ver-cuidador/${cuidador.id}`}
+                      className="btn-sitter result-profile-button"
                       style={{
                         display: "flex",
                         alignItems: "center",
+                        justifyContent: "center",
                         gap: "5px",
                         textDecoration: "none",
                       }}
                     >
-                      <Phone size={16} /> Contactar
-                    </a>
-                  )}
-                  {cuidador.email && (
-                    <a href={`mailto:${cuidador.email}`} style={{ fontSize: "0.9rem", color: "#4f46e5" }}>
-                      Enviar correo
-                    </a>
-                  )}
+                      <BookUser size={25} /> Ver perfil
+                  </Link>
                 </div>
               </article>
             ))

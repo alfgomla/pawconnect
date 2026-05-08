@@ -52,7 +52,7 @@ export default function Home() {
             {/* Botón abajo a la derecha */}
             <div className="absolute bottom-48 md:bottom-48 right-4 sm:right-6 lg:right-8">
               <Link
-                to="/login"
+                to="/buscar"
                 className="inline-block bg-[var(--pakal-cyan)] hover:bg-[var(--pakal-blue)] text-white px-20 py-4 rounded-lg font-semibold text-2xl transition-colors shadow-lg"
               >Agendar Estancia
               </Link>

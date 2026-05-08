@@ -17,6 +17,7 @@ export default function PerfilCuidador() {
   const [descripcion, setDescripcion] = useState("");
   const [telefono, setTelefono] = useState("");
   const [ciudad, setCiudad] = useState("");
+  const [colonia, setColonia] = useState("");
   const [fotoPerfil, setFotoPerfil] = useState("");
   const [codigoPostal, setCodigoPostal] = useState("");
    const [servicios, setServicios] = useState<string[]>([]);
@@ -45,6 +46,7 @@ export default function PerfilCuidador() {
                 setServicios(data.servicios || []);
                 setRating(data.rating || 0);
                 setCodigoPostal(data.codigoPostal || "");
+                setColonia(data.colonia || "");
             }
             setLoading(false);
         };
@@ -101,6 +103,7 @@ export default function PerfilCuidador() {
           <p className="text-gray-500">Correo: {user?.email || "Tu correo"}</p>
           <p className="text-gray-500">Código Postal: {codigoPostal || "Tu código postal"}</p>
           <p className="text-gray-500">Ciudad: {ciudad || "Tu ciudad"}</p>
+          <p className="text-gray-500">Colonia: {colonia || "Tu colonia"}</p>
         </div>
 
           {/* BOTÓN */}

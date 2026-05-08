@@ -186,6 +186,15 @@ body:has(.menu-overlay) {
 
 .btn-search:hover { background: #4338ca; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3); }
 
+.result-profile-action {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.result-profile-button {
+  min-width: 130px;
+}
+
 /* --- Info Cards --- */
 .featured-info { display: flex; justify-content: center; gap: 4rem; margin-top: 4rem; }
 .info-card h3 { font-size: 2rem; color: #4f46e5; margin: 0; }
@@ -206,6 +215,12 @@ body:has(.menu-overlay) {
     padding: 1rem 0;
   }
   .btn-search { width: 100%; justify-content: center; }
+  .result-profile-action {
+    width: 100%;
+  }
+  .result-profile-button {
+    width: 100%;
+  }
   .featured-info { gap: 2rem; flex-direction: column; }
 }
 
