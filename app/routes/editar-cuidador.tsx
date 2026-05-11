@@ -7,8 +7,8 @@ import ProtectedRoute from "../components/ProtectedRoute";
 import { useNavigate } from "react-router";
 
 const ubicacionDefault = {
-  latitud: 20.5888,
-  longitud: -100.3899,
+  latitudIni: 20.600713,
+  longitudIni: -100.420944,
 };
 
 type LocationPickerProps = {
@@ -23,8 +23,8 @@ function LocationPicker({ latitud, longitud, onChange }: LocationPickerProps) {
   const mapRef = useRef<import("leaflet").Map | null>(null);
   const markerRef = useRef<import("leaflet").Marker | null>(null);
 
-  const latitudMapa = Number.isFinite(Number(latitud)) ? Number(latitud) : ubicacionDefault.latitud;
-  const longitudMapa = Number.isFinite(Number(longitud)) ? Number(longitud) : ubicacionDefault.longitud;
+  const latitudMapa = Number.isFinite(Number(latitud)) ? Number(latitud) : ubicacionDefault.latitudIni;
+  const longitudMapa = Number.isFinite(Number(longitud)) ? Number(longitud) : ubicacionDefault.longitudIni;
 
   useEffect(() => {
     if (!mapContainerRef.current || mapRef.current) return;
@@ -54,7 +54,7 @@ function LocationPicker({ latitud, longitud, onChange }: LocationPickerProps) {
       iconAnchor: [14, 28],
     });
 
-    const map = leaflet.map(mapContainerRef.current).setView([latitudMapa, longitudMapa], 13);
+    const map = leaflet.map(mapContainerRef.current).setView([latitudMapa, longitudMapa], 12);
 
     leaflet.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
@@ -113,12 +113,11 @@ function LocationPicker({ latitud, longitud, onChange }: LocationPickerProps) {
 }
 
 export default function PerfilCuidador() {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const uid = user?.uid;
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
 
-  const [nombre, setNombre] = useState("");
   const [descripcion, setDescripcion] = useState("");
   const [telefono, setTelefono] = useState("");
   const [ciudad, setCiudad] = useState("");
@@ -149,7 +148,6 @@ export default function PerfilCuidador() {
 
             if (snap.exists()) {
                 const data = snap.data();
-                setNombre(data.nombre || "");
                 setDescripcion(data.descripcion || "");
                 setTelefono(data.telefono || "");
                 setCiudad(data.ciudad || "");
@@ -160,6 +158,21 @@ export default function PerfilCuidador() {
                 setRating(data.rating || 0);
                 setLatitud(data.ubicacion?.latitud?.toString() || "");
                 setLongitud(data.ubicacion?.longitud?.toString() || "");
+                // Validar si la ubicación existe y no es 0
+                const lat = data.ubicacion?.latitud;
+                const lng = data.ubicacion?.longitud;
+                if (lat && lng && lat !== 0 && lng !== 0) {
+                setLatitud(lat.toString());
+                setLongitud(lng.toString());
+                } else {
+                    // Si es 0 o no existe, usamos el default
+                    setLatitud(ubicacionDefault.latitudIni.toString());
+                    setLongitud(ubicacionDefault.longitudIni.toString());
+                }
+            } else {
+                // Si el documento ni siquiera existe, ponemos los defaults
+                setLatitud(ubicacionDefault.latitudIni.toString());
+                setLongitud(ubicacionDefault.longitudIni.toString());
             }
             setLoading(false);
         };
@@ -207,12 +220,12 @@ export default function PerfilCuidador() {
         const longitudNumero = Number(longitud);
         const tieneUbicacion = Number.isFinite(latitudNumero) && Number.isFinite(longitudNumero);
 
+        // 1. Preparamos los datos del perfil
         const perfilData = {
-        nombre,
         descripcion,
         telefono,
-        ciudad,
-        colonia,
+        ciudad: ciudad.toUpperCase(),
+        colonia: colonia.toUpperCase(),
         fotoPerfil,
         codigoPostal,
         servicios,
@@ -225,6 +238,7 @@ export default function PerfilCuidador() {
         }),
         };
 
+        // 2. Guardamos en la colección 'perfiles_cuidadores'
         await setDoc(doc(db, "perfiles_cuidadores", uid), perfilData);
 
         alert("Perfil actualizado");
@@ -239,6 +253,8 @@ export default function PerfilCuidador() {
             {/* HEADER */}        
             <div className="bg-white rounded-2xl shadow p-6 mt-4">
                 <div className="flex flex-col items-center space-y-3">
+                    <h1 className="text-2xl font-bold">{profile.nombre}</h1>
+                    <h2>{user?.email}</h2>
                     {/* FOTO */}
                     <img
                         src={fotoPerfil || "/images/default-user.png"}
@@ -263,23 +279,23 @@ export default function PerfilCuidador() {
                 <h3 className="font-semibold mb-2">Datos de contacto:</h3>
 
                 {/* NOMBRE  */}
-                <h3 className="font-semibold mb-2">Nombre</h3>
+                {/* <h3 className="font-semibold mb-2">Nombre</h3>
                 <input className="w-full border border-gray-300 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
-                placeholder="Nombre"
+                placeholder="Nombre completo"
                 value={nombre}
                 style={{ textTransform: "uppercase" }}
-                onChange={(e) => setNombre(e.target.value)}
-                />
+                onChange={(e) => setNombre(e.target.value.toUpperCase())}
+                /> */}
 
                 {/* ciudad */}
                 <h3 className="font-semibold mb-2">Ciudad</h3>
                 <select className="w-full border border-gray-300 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
-                 value={ciudad} required onChange={e => setCiudad(e.target.value)}>
-                    <option value="Queretaro">Querétaro</option>
-                    <option value="San Juan del Rio">San Juan del Río</option>
-                    <option value="El Marques">El Marqués</option>
-                    <option value="Corregidora">Corregidora</option>
-                    <option value="Juriquilla">Juriquilla</option>
+                 value={ciudad} required onChange={e => setCiudad(e.target.value.toUpperCase())}>
+                    <option value="QUERETRO">Querétaro</option>
+                    <option value="SAN JUAN DEL RIO">San Juan del Río</option>
+                    <option value="EL MARQUES">El Marqués</option>
+                    <option value="CORREGIDORA">Corregidora</option>
+                    <option value="JURIQUILLA">Juriquilla</option>
                 </select>
 
                 {/* colonia */}
@@ -288,7 +304,7 @@ export default function PerfilCuidador() {
                     placeholder="Colonia" 
                     value={colonia}
                     style={{ textTransform: "uppercase" }}
-                    onChange={(e) => setColonia(e.target.value)}
+                    onChange={(e) => setColonia(e.target.value.toUpperCase())}
                   />
 
                 {/* codigo postal */}

@@ -8,12 +8,13 @@ import { useNavigate } from "react-router";
 
 export default function PerfilCuidador() {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const uid = user?.uid;
+
+  // const [nombre, setNombre] = useState("");
 
   const [loading, setLoading] = useState(true);
 
-  const [nombre, setNombre] = useState("");
   const [descripcion, setDescripcion] = useState("");
   const [telefono, setTelefono] = useState("");
   const [ciudad, setCiudad] = useState("");
@@ -25,19 +26,20 @@ export default function PerfilCuidador() {
   const isComplete = "";
 
   // 🔥 Cargar datos
-    useEffect(() => {
-        const fetchData = async () => {
-            if (!uid) {
-                setLoading(false); // 🔥 IMPORTANTE
-                return;
-            }
-
-            const docRef = doc(db, "perfiles_cuidadores", uid);
-            const snap = await getDoc(docRef);
-
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!uid) {
+        setLoading(false); // 🔥 IMPORTANTE
+        return;
+      }
+      
+      const docRef = doc(db, "perfiles_cuidadores", uid);
+      const snap = await getDoc(docRef);
+      
+      console.log(user);
             if (snap.exists()) {
                 const data = snap.data();
-                setNombre(data.nombre || "");
+                // setNombre(data.nombre || "");
                 setDescripcion(data.descripcion || "");
                 setTelefono(data.telefono || "");
                 setCiudad(data.ciudad || "");
@@ -71,7 +73,7 @@ export default function PerfilCuidador() {
           </div>
 
           {/* NOMBRE */}
-          <h2 className="text-xl font-bold mt-3">{nombre || "Tu nombre"}</h2>
+          <h2 className="text-xl font-bold mt-3">{profile.nombre || "Tu nombre"}</h2>
           
         </div>
 

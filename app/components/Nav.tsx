@@ -14,6 +14,10 @@ export default function Nav() {
         navigate("/");
         await signOut(auth);
     };
+
+    const handlePerfil = async () => {
+        navigate("/perfil-cuidador");
+    };
     
     const primerNombre = profile?.nombre ? capitalizarNombre(profile.nombre).split(" ")[0]: "Usuario";
     
@@ -64,6 +68,7 @@ export default function Nav() {
                         <>
                             
                             <span className="welcome-msg">Hola, {primerNombre}</span>
+                            <button onClick={handlePerfil} className="btn-user">Perfil</button>
                             <button onClick={handleLogout} className="btn-sitter">Salir</button>
                         </>
                     ) : (
