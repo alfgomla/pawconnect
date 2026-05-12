@@ -376,286 +376,222 @@ export default function PerfilCuidador() {
 
   return (
     <ProtectedRoute allowedRoles={["cuidador"]}>
-        <div className="max-w-3xl mx-auto p-4">
-            {/* HEADER */}        
-            <div className="bg-white rounded-2xl shadow p-6 mt-4">
-                <div className="flex flex-col items-center space-y-3">
-                    <h1 className="text-2xl font-bold">{profile?.nombre}</h1>
-                    <h2>{user?.email}</h2>
-                    {/* FOTO */}
-                    <img
-                        src={fotoPerfil || "/images/default-user.png"}
-                        className="w-28 h-28 rounded-full object-cover border-4 border-gray-100 shadow"
-                    />
-                    <label className="text-sm text-blue-500 cursor-pointer hover:underline">
-                        Cambiar foto
-                        <input
-                        type="file"
-                        className="hidden"
-                        onChange={(e) => {
-                            if (e.target.files?.[0]) {
-                            handleUpload(e.target.files[0]);
-                            }
-                        }}
-                        />
-                    </label>
-                </div>
-            </div>
-
-            <div className="bg-white rounded-2xl shadow p-6 mt-4">
-                <h3 className="font-semibold mb-2">Datos de contacto:</h3>
-
-                {/* NOMBRE  */}
-                {/* <h3 className="font-semibold mb-2">Nombre</h3>
-                <input className="w-full border border-gray-300 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
-                placeholder="Nombre completo"
-                value={nombre}
-                style={{ textTransform: "uppercase" }}
-                onChange={(e) => setNombre(e.target.value.toUpperCase())}
-                /> */}
-
-                {/* ciudad */}
-                <h3 className="font-semibold mb-2">Ciudad</h3>
-                <select className="w-full border border-gray-300 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
-                 value={ciudad} required onChange={e => setCiudad(e.target.value.toUpperCase())}>
-                    <option value="QUERETRO">Querétaro</option>
-                    <option value="SAN JUAN DEL RIO">San Juan del Río</option>
-                    <option value="EL MARQUES">El Marqués</option>
-                    <option value="CORREGIDORA">Corregidora</option>
-                    <option value="JURIQUILLA">Juriquilla</option>
-                </select>
-
-                {/* colonia */}
-                <h3 className="font-semibold mb-2">Colonia</h3>
-                <input className="w-full border border-gray-300 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400" 
-                    placeholder="Colonia" 
-                    value={colonia}
-                    style={{ textTransform: "uppercase" }}
-                    onChange={(e) => setColonia(e.target.value.toUpperCase())}
-                  />
-
-                {/* codigo postal */}
-                <h3 className="font-semibold mb-2">Codigo Postal</h3>
-                <input className="w-full border border-gray-300 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
-                placeholder="Código Postal"
-                value={codigoPostal}
-                onChange={(e) => setCodigoPostal(e.target.value)}
+      <div className="max-w-3xl mx-auto p-4">
+        {/* HEADER */}        
+        <div className="bg-white rounded-2xl shadow p-6 mt-4">
+            <div className="flex flex-col items-center space-y-3">
+                <h1 className="text-2xl font-bold">{profile?.nombre}</h1>
+                <h2>{user?.email}</h2>
+                {/* FOTO */}
+                <img
+                    src={fotoPerfil || "/images/default-user.png"}
+                    className="w-28 h-28 rounded-full object-cover border-4 border-gray-100 shadow"
                 />
-
-                {/* telefono */}
-                <h3 className="font-semibold mb-2">Contacto</h3>
-                <input className="w-full border border-gray-300 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
-                placeholder="Teléfono"
-                value={telefono}
-                onChange={(e) => setTelefono(e.target.value)}
-                />
-            </div>
-
-            {/* DESCRIPCIÓN */}
-            <div className="bg-white rounded-2xl shadow p-6 mt-4">
-                <h3 className="font-semibold mb-2">Sobre mí</h3>
-                <textarea
-                className="w-full border border-gray-300 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
-                placeholder="Describe tus servicios..."
-                value={descripcion}
-                onChange={(e) => setDescripcion(e.target.value)}
-                />
-            </div>
-            
-            {/* SERVICIOS */}
-            <div className="bg-white rounded-2xl shadow p-6 mt-4">
-                <div style={{ textAlign: 'left', margin: '10px 0' }}>
-                    <p style={{ fontWeight: 'bold' }}>Servicios que ofreces:</p>
-                    
-                    <div className="grid grid-cols-2 gap-3 mt-3">
-  {serviciosDisponibles.map(s => {
-    const activo = servicios.includes(s);
-
-    return (
-      <button
-        key={s}
-        type="button"
-        onClick={() => handleCheckboxChange(s)}
-        className={`p-3 rounded-xl border text-sm transition
-          ${activo 
-            ? "bg-blue-500 text-white border-blue-500" 
-            : "bg-gray-100 hover:bg-gray-200"}
-        `}
-      >
-        {s}
-      </button>
-    );
-  })}
-</div>
-                </div>
-            </div>
-
-            {/* BOTÓN */}
-            {servicios.length > 0 && (
-            <div className="bg-white rounded-2xl shadow p-6 mt-4">
-                <h3 className="font-semibold mb-2">Disponibilidad por servicio</h3>
-                <p className="text-gray-500 mb-4">
-                    Selecciona los dias y horarios en los que ofreces cada servicio activo.
-                </p>
-
-                <div className="space-y-4">
-                    {servicios.map((servicio) => {
-                        const disponibilidadServicio = getDisponibilidadServicio(servicio);
-
-                        return (
-                            <section key={servicio} className="border border-gray-200 rounded-xl p-4">
-                                <p className="font-semibold mb-3">{servicio}</p>
-
-                                <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-                                    {diasDisponibles.map((dia) => {
-                                        const activo = disponibilidadServicio.dias.includes(dia);
-
-                                        return (
-                                            <button
-                                                key={dia}
-                                                type="button"
-                                                onClick={() => handleDiaChange(servicio, dia)}
-                                                className={`p-2 rounded-xl border text-sm transition
-                                                    ${activo
-                                                        ? "bg-blue-500 text-white border-blue-500"
-                                                        : "bg-gray-100 hover:bg-gray-200"}
-                                                `}
-                                            >
-                                                {dia}
-                                            </button>
-                                        );
-                                    })}
-                                </div>
-
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
-                                    <div>
-                                        <h3 className="font-semibold mb-2">Hora de inicio</h3>
-                                        <input
-                                            type="time"
-                                            className="w-full border border-gray-300 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
-                                            value={disponibilidadServicio.horaInicio}
-                                            onChange={(e) =>
-                                                updateDisponibilidadServicio(servicio, {
-                                                    horaInicio: e.target.value,
-                                                })
-                                            }
-                                        />
-                                    </div>
-
-                                    <div>
-                                        <h3 className="font-semibold mb-2">Hora de fin</h3>
-                                        <input
-                                            type="time"
-                                            className="w-full border border-gray-300 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
-                                            value={disponibilidadServicio.horaFin}
-                                            onChange={(e) =>
-                                                updateDisponibilidadServicio(servicio, {
-                                                    horaFin: e.target.value,
-                                                })
-                                            }
-                                        />
-                                    </div>
-                                </div>
-
-                                {servicio === "Paseo" && (
-                                    <div className="mt-4">
-                                        <h3 className="font-semibold mb-2">Costo por hora</h3>
-                                        <input
-                                            type="number"
-                                            min="0"
-                                            step="1"
-                                            className="w-full border border-gray-300 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
-                                            placeholder="Ej. 120"
-                                            value={disponibilidadServicio.costoPorHora || ""}
-                                            onChange={(e) =>
-                                                updateDisponibilidadServicio(servicio, {
-                                                    costoPorHora: e.target.value,
-                                                })
-                                            }
-                                        />
-                                    </div>
-                                )}
-
-                                {servicio === "Alojamiento" && (
-                                    <div className="mt-4">
-                                        <h3 className="font-semibold mb-2">Costo por dia</h3>
-                                        <input
-                                            type="number"
-                                            min="0"
-                                            step="1"
-                                            className="w-full border border-gray-300 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
-                                            placeholder="Ej. 350"
-                                            value={disponibilidadServicio.costoPorDia || ""}
-                                            onChange={(e) =>
-                                                updateDisponibilidadServicio(servicio, {
-                                                    costoPorDia: e.target.value,
-                                                })
-                                            }
-                                        />
-                                    </div>
-                                )}
-                            </section>
-                        );
-                    })}
-                </div>
-            </div>
-            )}
-
-            {/* UBICACION */}
-            <div className="bg-white rounded-2xl shadow p-6 mt-4">
-                <h3 className="font-semibold mb-2">Ubicacion</h3>
-                <p className="text-gray-500 mb-4">
-                    Coloca el pin de tu zona de servicio. Puedes usar tu ubicacion actual o escribir las coordenadas.
-                </p>
-
-                <LocationPicker
-                    latitud={latitud}
-                    longitud={longitud}
-                    onChange={(lat, lng) => {
-                        setLatitud(lat.toFixed(6));
-                        setLongitud(lng.toFixed(6));
+                <label className="text-sm text-blue-500 cursor-pointer hover:underline">
+                    Cambiar foto
+                    <input
+                    type="file"
+                    className="hidden"
+                    onChange={(e) => {
+                        if (e.target.files?.[0]) {
+                        handleUpload(e.target.files[0]);
+                        }
                     }}
-                />
+                    />
+                </label>
+            </div>
+        </div>
 
-                <button
-                    type="button"
-                    onClick={handleObtenerUbicacion}
-                    className="btn-sitter w-full mt-4"
-                >
-                    Usar mi ubicacion actual
-                </button>
+        <div className="bg-white rounded-2xl shadow p-6 mt-4">
+          <h3 className="font-semibold mb-2">Datos de contacto:</h3>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
-                    <div>
-                        <h3 className="font-semibold mb-2">Latitud</h3>
-                        <input
-                            className="w-full border border-gray-300 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
-                            placeholder="20.5888"
-                            value={latitud}
-                            onChange={(e) => setLatitud(e.target.value)}
-                        />
+          {/* ciudad */}
+          <h3 className="font-semibold mb-2">Ciudad</h3>
+          <select className="w-full border border-gray-300 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+            value={ciudad} required onChange={e => setCiudad(e.target.value.toUpperCase())}>
+            <option value="QUERETRO">Querétaro</option>
+            <option value="SAN JUAN DEL RIO">San Juan del Río</option>
+            <option value="EL MARQUES">El Marqués</option>
+            <option value="CORREGIDORA">Corregidora</option>
+            <option value="JURIQUILLA">Juriquilla</option>
+          </select>
+
+          {/* colonia */}
+          <h3 className="font-semibold mb-2">Colonia</h3>
+          <input className="w-full border border-gray-300 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400" 
+            placeholder="Colonia" 
+            value={colonia}
+            style={{ textTransform: "uppercase" }}
+            onChange={(e) => setColonia(e.target.value.toUpperCase())}
+          />
+
+          {/* codigo postal */}
+          <h3 className="font-semibold mb-2">Codigo Postal</h3>
+          <input className="w-full border border-gray-300 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+            placeholder="Código Postal"
+            value={codigoPostal}
+            onChange={(e) => setCodigoPostal(e.target.value)}
+          />
+
+          {/* telefono */}
+          <h3 className="font-semibold mb-2">Contacto</h3>
+          <input className="w-full border border-gray-300 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+            placeholder="Teléfono"
+            value={telefono}
+            onChange={(e) => setTelefono(e.target.value)}
+          />
+        </div>
+
+        {/* DESCRIPCIÓN */}
+        <div className="bg-white rounded-2xl shadow p-6 mt-4">
+          <h3 className="font-semibold mb-2">Sobre mí</h3>
+          <textarea
+            className="w-full border border-gray-300 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+            placeholder="Describe tus servicios..."
+            value={descripcion}
+            onChange={(e) => setDescripcion(e.target.value)}
+          />
+        </div>
+          
+        {/* SERVICIOS */}
+        <div className="bg-white rounded-2xl shadow p-6 mt-4">
+          <div style={{ textAlign: 'left', margin: '10px 0' }}>
+            <p style={{ fontWeight: 'bold' }}>Servicios que ofreces:</p>
+            <div className="grid grid-cols-2 gap-3 mt-3">
+              {serviciosDisponibles.map(s => {
+                const activo = servicios.includes(s);
+                return (
+                  <button key={s} type="button" onClick={() => handleCheckboxChange(s)} 
+                    className={`${activo ? "btn-user" : "btn-sitter"}`}>
+                    {s}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+        {/* BOTÓN */}
+        {servicios.length > 0 && (
+          <div className="bg-white rounded-2xl shadow p-6 mt-4">
+            <h3 className="font-semibold mb-2">Disponibilidad por servicio</h3>
+            <p className="text-gray-500 mb-4">Selecciona los dias y horarios en los que ofreces cada servicio activo.</p>
+            <div className="space-y-4">
+              {servicios.map((servicio) => {
+                const disponibilidadServicio = getDisponibilidadServicio(servicio);
+                return (
+                  <section key={servicio} className="border border-gray-200 rounded-xl p-4">
+                    <p className="font-semibold mb-3">{servicio}</p>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                      {diasDisponibles.map((dia) => {
+                        const activo = disponibilidadServicio.dias.includes(dia);
+                        return (
+                          <button key={dia} type="button" onClick={() => handleDiaChange(servicio, dia)} 
+                            className={`${activo ? "btn-user" : "btn-sitter"}`}>
+                            {dia}
+                          </button>
+                        );
+                      })}
                     </div>
 
-                    <div>
-                        <h3 className="font-semibold mb-2">Longitud</h3>
-                        <input
-                            className="w-full border border-gray-300 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
-                            placeholder="-100.3899"
-                            value={longitud}
-                            onChange={(e) => setLongitud(e.target.value)}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
+                      <div>
+                        <h3 className="font-semibold mb-2">Hora de inicio</h3>
+                        <input type="time" className="w-full border border-gray-300 p-3 
+                          rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+                          value={disponibilidadServicio.horaInicio}
+                            onChange={(e) =>updateDisponibilidadServicio(servicio, {horaInicio: e.target.value,})
+                          }
                         />
+                      </div>
+
+                      <div>
+                        <h3 className="font-semibold mb-2">Hora de fin</h3>
+                        <input type="time" className="w-full border border-gray-300 p-3 
+                          rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+                          value={disponibilidadServicio.horaFin} 
+                            onChange={(e) =>updateDisponibilidadServicio(servicio, {horaFin: e.target.value,})
+                          }
+                        />
+                      </div>
                     </div>
-                </div>
+
+                    {servicio === "Paseo" && (
+                      <div className="mt-4">
+                        <h3 className="font-semibold mb-2">Costo por hora</h3>
+                        <input type="number" min="0" step="1"
+                          className="w-full border border-gray-300 p-3 rounded-xl focus:outline-none 
+                          focus:ring-2 focus:ring-blue-400" placeholder="Ej. 120"
+                          value={disponibilidadServicio.costoPorHora || ""}
+                            onChange={(e) => updateDisponibilidadServicio(servicio, 
+                              { costoPorHora: e.target.value,})
+                          }
+                        />
+                      </div>
+                    )}
+
+                    {servicio === "Alojamiento" && (
+                      <div className="mt-4">
+                        <h3 className="font-semibold mb-2">Costo por dia</h3>
+                        <input type="number" min="0" step="1"
+                          className="w-full border border-gray-300 p-3 rounded-xl focus:outline-none 
+                          focus:ring-2 focus:ring-blue-400" placeholder="Ej. 350"
+                          value={disponibilidadServicio.costoPorDia || ""}
+                            onChange={(e) => updateDisponibilidadServicio(servicio, 
+                              {costoPorDia: e.target.value,})
+                          }
+                        />
+                      </div>
+                    )}
+
+                  </section>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* UBICACION */}
+        <div className="bg-white rounded-2xl shadow p-6 mt-4">
+          <h3 className="font-semibold mb-2">Ubicacion</h3>
+          <p className="text-gray-500 mb-4">
+              Coloca el pin de tu zona de servicio. Puedes usar tu ubicacion actual o escribir las coordenadas.
+          </p>
+
+          <LocationPicker latitud={latitud} longitud={longitud} onChange={(lat, lng) => {
+              setLatitud(lat.toFixed(6));
+              setLongitud(lng.toFixed(6));
+            }}
+          />
+
+          <button type="button" onClick={handleObtenerUbicacion} className="btn-sitter w-full mt-4">
+            Usar mi ubicacion actual
+          </button>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
+            <div>
+              <h3 className="font-semibold mb-2">Latitud</h3>
+              <input className="w-full border border-gray-300 p-3 rounded-xl focus:outline-none 
+                focus:ring-2 focus:ring-blue-400" placeholder="20.5888"
+                value={latitud} onChange={(e) => setLatitud(e.target.value)}
+              />
             </div>
 
-            <button
-                onClick={handleSave}
-                className="btn-user w-full mt-6"
-            >
-                Guardar cambios
-            </button>
-
+            <div>
+              <h3 className="font-semibold mb-2">Longitud</h3>
+              <input className="w-full border border-gray-300 p-3 rounded-xl focus:outline-none 
+                focus:ring-2 focus:ring-blue-400" placeholder="-100.3899"
+                value={longitud} onChange={(e) => setLongitud(e.target.value)}
+              />
+            </div>
+          </div>
         </div>
+
+        <button onClick={handleSave} className="btn-user w-full mt-6">
+            Guardar cambios
+        </button>
+
+      </div>
     </ProtectedRoute>
   );
 }

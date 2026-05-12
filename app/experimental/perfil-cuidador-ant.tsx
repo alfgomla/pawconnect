@@ -1,9 +1,29 @@
 import { useEffect, useState } from "react";
 import { auth, db, storage } from "../lib/firebase";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { useAuth } from "../context/AuthContext";
 import ProtectedRoute from "../components/ProtectedRoute";
 import { useNavigate } from "react-router";
+
+const serviciosDisponibles = [
+  "Paseo",
+  "Estética",
+  "Adiestramiento",
+  "Alojamiento",
+  "Veterinario",
+  "Cremación",
+];
+
+const diasDisponibles = [
+  "Lunes",
+  "Martes",
+  "Miercoles",
+  "Jueves",
+  "Viernes",
+  "Sabado",
+  "Domingo",
+];
 
 export default function PerfilCuidador() {
   const navigate = useNavigate();
@@ -20,21 +40,9 @@ export default function PerfilCuidador() {
   const [colonia, setColonia] = useState("");
   const [fotoPerfil, setFotoPerfil] = useState("");
   const [codigoPostal, setCodigoPostal] = useState("");
-  const [servicios, setServicios] = useState<string[]>([]);
-  const [disponibilidad, setDisponibilidad] = useState<any>({}); // Cambia [] por {}
+   const [servicios, setServicios] = useState<string[]>([]);
   const [rating, setRating] = useState(0);
   const isComplete = "";
-
-  // checa si el costo es por dia por hora o consultar los costos
-  const checaCosto = (costoDia: number, costoHora: number) => {
-    if (costoDia > 0) {
-      return "Costo: $" + costoDia.toString() + " por día, ";
-    }else if (costoHora > 0) {
-      return "Costo: $" + costoHora.toString() + " por hora, ";
-    } else {
-      return "Consultar los costos, ";
-    }
-  }  
 
   // 🔥 Cargar datos
   useEffect(() => {
@@ -47,8 +55,10 @@ export default function PerfilCuidador() {
       const docRef = doc(db, "perfiles_cuidadores", uid);
       const snap = await getDoc(docRef);
       
+      console.log(user);
             if (snap.exists()) {
                 const data = snap.data();
+                // setNombre(data.nombre || "");
                 setDescripcion(data.descripcion || "");
                 setTelefono(data.telefono || "");
                 setCiudad(data.ciudad || "");
@@ -58,16 +68,14 @@ export default function PerfilCuidador() {
                 setRating(data.rating || 0);
                 setCodigoPostal(data.codigoPostal || "");
                 setColonia(data.colonia || "");
-                setDisponibilidad(data.disponibilidad || []);
             }
             setLoading(false);
         };
 
         fetchData();
     }, [uid]);
-   const x="Paseo";
+
    if (loading) return <p>Cargando...</p>;
-              console.log(disponibilidad?.[x]);
 
   return (
     <ProtectedRoute allowedRoles={["cuidador"]}>
@@ -95,23 +103,23 @@ export default function PerfilCuidador() {
         </div>
 
         {/* SERVICIOS */}
-        <div className="bg-white rounded-2xl shadow p-6 mt-4 text-center">
+        <div className="bg-white rounded-2xl shadow p-6 mt-4">
           <h3 className="font-semibold mb-2">Los servicios con los que contamos:</h3>
-          {/*LISTA DE SERVICIOS*/}
-          {servicios.map((s, indexServicios) => (
-            <div key={indexServicios} className="bg-white rounded-2xl shadow-md p-1 mt-3 border-1 border-blue-400">
-              <p className="text-gray-500" >{s}</p>
-              {disponibilidad?.[s]?.dias?.map((dia: string, indexDia: number) => (                
-                  <span key={indexDia} className="text-gray-500">{dia} </span>
-              ))}
-
-              <p className="text-cyan-600 font-medium">
-                {checaCosto(disponibilidad?.[s]?.costoPorDia, disponibilidad?.[s]?.costoPorHora)}
-                 en un horario de {disponibilidad?.[s]?.horaInicio} a {disponibilidad?.[s]?.horaFin}
-              </p>
-
-            </div>
-        ))}
+          {/* <p className="text-gray-500">{servicios[0]}</p>
+          <p className="text-gray-500">{servicios[1]}</p>
+          <p className="text-gray-500">{servicios[2]}</p>
+          <p className="text-gray-500">{servicios[3]}</p>
+          <p className="text-gray-500">{servicios[4]}</p>
+          <p className="text-gray-500">{servicios[5]}</p> */}
+          {serviciosDisponibles.map(s => {
+            const activo = servicios.includes(s);
+            return (
+              <button key={s} type="button" onClick={() => handleCheckboxChange(s)} 
+                className={`${activo ? "btn-user" : "btn-sitter"}`}>
+                {s}
+              </button>
+            );
+          })}
         </div>
 
         <div className="bg-white rounded-2xl shadow p-6 mt-4">
