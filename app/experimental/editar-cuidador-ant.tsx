@@ -11,83 +11,6 @@ const ubicacionDefault = {
   longitudIni: -100.420944,
 };
 
-const serviciosDisponibles = [
-  "Paseo",
-  "Estética",
-  "Adiestramiento",
-  "Alojamiento",
-  "Veterinario",
-  "Cremación",
-];
-
-const diasDisponibles = [
-  "Lunes",
-  "Martes",
-  "Miercoles",
-  "Jueves",
-  "Viernes",
-  "Sabado",
-  "Domingo",
-];
-
-type DisponibilidadServicio = {
-  dias: string[];
-  horaInicio: string;
-  horaFin: string;
-  costoPorHora?: string;
-  costoPorDia?: string;
-};
-
-type DisponibilidadPorServicio = Record<string, DisponibilidadServicio>;
-
-const disponibilidadDefault: DisponibilidadServicio = {
-  dias: [],
-  horaInicio: "",
-  horaFin: "",
-  costoPorHora: "",
-  costoPorDia: "",
-};
-
-const serviciosAlias: Record<string, string> = {
-  "EstÃ©tica": "Estética",
-  "CremaciÃ³n": "Cremación",
-};
-
-const normalizarServicio = (servicio: string) => serviciosAlias[servicio] || servicio;
-
-const normalizarServicios = (servicios: unknown): string[] => {
-  if (!Array.isArray(servicios)) return [];
-
-  return Array.from(
-    new Set(
-      servicios
-        .filter((servicio): servicio is string => typeof servicio === "string")
-        .map(normalizarServicio)
-    )
-  );
-};
-
-const normalizarDisponibilidad = (disponibilidad: unknown): DisponibilidadPorServicio => {
-  if (!disponibilidad || typeof disponibilidad !== "object") return {};
-
-  return Object.entries(disponibilidad as Record<string, Partial<DisponibilidadServicio>>).reduce(
-    (acc, [servicio, datos]) => {
-      const servicioNormalizado = normalizarServicio(servicio);
-
-      acc[servicioNormalizado] = {
-        dias: Array.isArray(datos?.dias) ? datos.dias : [],
-        horaInicio: datos?.horaInicio || "",
-        horaFin: datos?.horaFin || "",
-        costoPorHora: datos?.costoPorHora || "",
-        costoPorDia: datos?.costoPorDia || "",
-      };
-
-      return acc;
-    },
-    {} as DisponibilidadPorServicio
-  );
-};
-
 type LocationPickerProps = {
   latitud: string;
   longitud: string;
@@ -205,39 +128,11 @@ export default function PerfilCuidador() {
   const [rating, setRating] = useState(0);
   const [latitud, setLatitud] = useState("");
   const [longitud, setLongitud] = useState("");
-  const [disponibilidad, setDisponibilidad] = useState<DisponibilidadPorServicio>({});
 
   const handleCheckboxChange = (servicio: string) => {
     setServicios(prev => 
       prev.includes(servicio) ? prev.filter(s => s !== servicio) : [...prev, servicio]
     );
-  };
-
-  const getDisponibilidadServicio = (servicio: string) => {
-    return disponibilidad[servicio] || disponibilidadDefault;
-  };
-
-  const updateDisponibilidadServicio = (
-    servicio: string,
-    cambios: Partial<DisponibilidadServicio>
-  ) => {
-    setDisponibilidad((prev) => ({
-      ...prev,
-      [servicio]: {
-        ...disponibilidadDefault,
-        ...prev[servicio],
-        ...cambios,
-      },
-    }));
-  };
-
-  const handleDiaChange = (servicio: string, dia: string) => {
-    const actual = getDisponibilidadServicio(servicio);
-    const dias = actual.dias.includes(dia)
-      ? actual.dias.filter((item) => item !== dia)
-      : [...actual.dias, dia];
-
-    updateDisponibilidadServicio(servicio, { dias });
   };
 
   // 🔥 Cargar datos
@@ -259,8 +154,7 @@ export default function PerfilCuidador() {
                 setColonia(data.colonia || ""); 
                 setFotoPerfil(data.fotoPerfil || "");
                 setCodigoPostal(data.codigoPostal || "");
-                setServicios(normalizarServicios(data.servicios));
-                setDisponibilidad(normalizarDisponibilidad(data.disponibilidad));
+                setServicios(data.servicios || []);
                 setRating(data.rating || 0);
                 setLatitud(data.ubicacion?.latitud?.toString() || "");
                 setLongitud(data.ubicacion?.longitud?.toString() || "");
@@ -325,26 +219,6 @@ export default function PerfilCuidador() {
         const latitudNumero = Number(latitud);
         const longitudNumero = Number(longitud);
         const tieneUbicacion = Number.isFinite(latitudNumero) && Number.isFinite(longitudNumero);
-        const serviciosNormalizados = normalizarServicios(servicios);
-        const disponibilidadActiva = serviciosNormalizados.reduce<Record<string, any>>((acc, servicio) => {
-          const datos = getDisponibilidadServicio(servicio);
-          const costoPorHora = Number(datos.costoPorHora);
-          const costoPorDia = Number(datos.costoPorDia);
-
-          acc[servicio] = {
-            dias: datos.dias,
-            horaInicio: datos.horaInicio,
-            horaFin: datos.horaFin,
-            ...(servicio === "Paseo" &&
-              Number.isFinite(costoPorHora) &&
-              datos.costoPorHora !== "" && { costoPorHora }),
-            ...(servicio === "Alojamiento" &&
-              Number.isFinite(costoPorDia) &&
-              datos.costoPorDia !== "" && { costoPorDia }),
-          };
-
-          return acc;
-        }, {});
 
         // 1. Preparamos los datos del perfil
         const perfilData = {
@@ -354,8 +228,7 @@ export default function PerfilCuidador() {
         colonia: colonia.toUpperCase(),
         fotoPerfil,
         codigoPostal,
-        servicios: serviciosNormalizados,
-        disponibilidad: disponibilidadActiva,
+        servicios,
         rating,
         ...(tieneUbicacion && {
           ubicacion: {
@@ -380,7 +253,7 @@ export default function PerfilCuidador() {
             {/* HEADER */}        
             <div className="bg-white rounded-2xl shadow p-6 mt-4">
                 <div className="flex flex-col items-center space-y-3">
-                    <h1 className="text-2xl font-bold">{profile?.nombre}</h1>
+                    <h1 className="text-2xl font-bold">{profile.nombre}</h1>
                     <h2>{user?.email}</h2>
                     {/* FOTO */}
                     <img
@@ -468,7 +341,7 @@ export default function PerfilCuidador() {
                     <p style={{ fontWeight: 'bold' }}>Servicios que ofreces:</p>
                     
                     <div className="grid grid-cols-2 gap-3 mt-3">
-  {serviciosDisponibles.map(s => {
+  {['Paseo', 'Estética', 'Adiestramiento', 'Alojamiento', 'Veterinario', 'Cremación'].map(s => {
     const activo = servicios.includes(s);
 
     return (
@@ -491,116 +364,6 @@ export default function PerfilCuidador() {
             </div>
 
             {/* BOTÓN */}
-            {servicios.length > 0 && (
-            <div className="bg-white rounded-2xl shadow p-6 mt-4">
-                <h3 className="font-semibold mb-2">Disponibilidad por servicio</h3>
-                <p className="text-gray-500 mb-4">
-                    Selecciona los dias y horarios en los que ofreces cada servicio activo.
-                </p>
-
-                <div className="space-y-4">
-                    {servicios.map((servicio) => {
-                        const disponibilidadServicio = getDisponibilidadServicio(servicio);
-
-                        return (
-                            <section key={servicio} className="border border-gray-200 rounded-xl p-4">
-                                <p className="font-semibold mb-3">{servicio}</p>
-
-                                <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-                                    {diasDisponibles.map((dia) => {
-                                        const activo = disponibilidadServicio.dias.includes(dia);
-
-                                        return (
-                                            <button
-                                                key={dia}
-                                                type="button"
-                                                onClick={() => handleDiaChange(servicio, dia)}
-                                                className={`p-2 rounded-xl border text-sm transition
-                                                    ${activo
-                                                        ? "bg-blue-500 text-white border-blue-500"
-                                                        : "bg-gray-100 hover:bg-gray-200"}
-                                                `}
-                                            >
-                                                {dia}
-                                            </button>
-                                        );
-                                    })}
-                                </div>
-
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
-                                    <div>
-                                        <h3 className="font-semibold mb-2">Hora de inicio</h3>
-                                        <input
-                                            type="time"
-                                            className="w-full border border-gray-300 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
-                                            value={disponibilidadServicio.horaInicio}
-                                            onChange={(e) =>
-                                                updateDisponibilidadServicio(servicio, {
-                                                    horaInicio: e.target.value,
-                                                })
-                                            }
-                                        />
-                                    </div>
-
-                                    <div>
-                                        <h3 className="font-semibold mb-2">Hora de fin</h3>
-                                        <input
-                                            type="time"
-                                            className="w-full border border-gray-300 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
-                                            value={disponibilidadServicio.horaFin}
-                                            onChange={(e) =>
-                                                updateDisponibilidadServicio(servicio, {
-                                                    horaFin: e.target.value,
-                                                })
-                                            }
-                                        />
-                                    </div>
-                                </div>
-
-                                {servicio === "Paseo" && (
-                                    <div className="mt-4">
-                                        <h3 className="font-semibold mb-2">Costo por hora</h3>
-                                        <input
-                                            type="number"
-                                            min="0"
-                                            step="1"
-                                            className="w-full border border-gray-300 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
-                                            placeholder="Ej. 120"
-                                            value={disponibilidadServicio.costoPorHora || ""}
-                                            onChange={(e) =>
-                                                updateDisponibilidadServicio(servicio, {
-                                                    costoPorHora: e.target.value,
-                                                })
-                                            }
-                                        />
-                                    </div>
-                                )}
-
-                                {servicio === "Alojamiento" && (
-                                    <div className="mt-4">
-                                        <h3 className="font-semibold mb-2">Costo por dia</h3>
-                                        <input
-                                            type="number"
-                                            min="0"
-                                            step="1"
-                                            className="w-full border border-gray-300 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
-                                            placeholder="Ej. 350"
-                                            value={disponibilidadServicio.costoPorDia || ""}
-                                            onChange={(e) =>
-                                                updateDisponibilidadServicio(servicio, {
-                                                    costoPorDia: e.target.value,
-                                                })
-                                            }
-                                        />
-                                    </div>
-                                )}
-                            </section>
-                        );
-                    })}
-                </div>
-            </div>
-            )}
-
             {/* UBICACION */}
             <div className="bg-white rounded-2xl shadow p-6 mt-4">
                 <h3 className="font-semibold mb-2">Ubicacion</h3>
