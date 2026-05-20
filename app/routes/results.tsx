@@ -3,6 +3,7 @@ import { Link, useSearchParams } from "react-router";
 import { db } from "../lib/firebase";
 import { collection, doc, getDoc, getDocs, query, where } from "firebase/firestore";
 import { ArrowLeft, Star, BookUser } from "lucide-react";
+import { useAuth } from "../context/AuthContext";
 
 type CuidadorResultado = {
   id: string;
@@ -18,12 +19,15 @@ type CuidadorResultado = {
   colonia?: string;
 };
 
+const obtenerPrimerNombre = (nombre?: string) => {
+  return nombre?.trim().split(/\s+/)[0] || "Cuidador";
+};
+
 export default function Results() {
   const [searchParams] = useSearchParams();
   const [cuidadores, setCuidadores] = useState<CuidadorResultado[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-
   const servicioBusqueda = searchParams.get("servicio") || "";
 
   useEffect(() => {
@@ -55,7 +59,7 @@ export default function Results() {
               id: perfilDoc.id,
               ...perfilData,
               email: usuarioData.email,
-              nombre: perfilData.nombre || usuarioData.nombre,
+              nombre: obtenerPrimerNombre(perfilData.nombre || usuarioData.nombre),
               colonia: perfilData.colonia || usuarioData.colonia,
             } as CuidadorResultado;
           })
@@ -100,9 +104,10 @@ export default function Results() {
                   alignItems: "center",
                 }}
               >
+
                 <img
                   src={cuidador.fotoPerfil || "/images/default-user.png"}
-                  alt={cuidador.nombre || "Cuidador"}
+                  alt={obtenerPrimerNombre(cuidador.nombre) || "Cuidador"}
                   style={{
                     width: "76px",
                     height: "76px",
@@ -112,7 +117,7 @@ export default function Results() {
                 />
 
                 <div style={{ flex: "1 1 240px", minWidth: 0 }}>
-                  <h3 style={{ color: "#4f46e5", fontWeight: "600", margin: 0 }}>{cuidador.nombre || "Cuidador Pakal Pets"}</h3>
+                  <h3 style={{ color: "#4f46e5", fontWeight: "600", margin: 0 }}>{obtenerPrimerNombre(cuidador.nombre)}</h3>
                   <p style={{ color: "var(--pakal-cyan)", fontSize: "0.95rem", margin: "0.5rem 0" }}>{cuidador.colonia || "Tu colonia"}</p>
                   {cuidador.descripcion && (
                     <p style={{ color: "#555", fontSize: "0.95rem", margin: "0.5rem 0" }}>
@@ -127,7 +132,7 @@ export default function Results() {
 
                 <div className="result-profile-action">
                   <Link
-                      to={`/ver-cuidador/${cuidador.id}`}
+                      to={`/ver-cuidador/${cuidador.id}?servicio=${encodeURIComponent(servicioBusqueda)}`}
                       className="btn-sitter result-profile-button"
                       style={{
                         display: "flex",
