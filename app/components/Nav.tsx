@@ -15,9 +15,21 @@ export default function Nav() {
         await signOut(auth);
     };
 
-    const handlePerfil = async () => {
+    const handlePerfil = () => {
+    // Verificamos si existe el perfil y su tipo
+    if (profile?.tipo === "cuidador") {
         navigate("/perfil-cuidador");
-    };
+    } else if (profile?.tipo === "dueno") {
+        navigate("/perfil-dueno");
+    } else {
+        // Fallback por si acaso o si es otro tipo de usuario
+        console.warn("Tipo de perfil no reconocido");
+        navigate("/"); 
+    }
+    
+    // Cerramos el menú al navegar
+    setIsMenuOpen(false);
+};
     
     const primerNombre = profile?.nombre ? capitalizarNombre(profile.nombre).split(" ")[0]: "Usuario";
     

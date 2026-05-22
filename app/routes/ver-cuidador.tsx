@@ -75,15 +75,7 @@ export default function VerCuidador() {
           return;
         }
 
-        const perfilData = perfilSnap.data();
-        const usuarioSnap = await getDoc(doc(db, "usuarios", id));
-        const usuarioData = usuarioSnap.exists() ? usuarioSnap.data() : {};
-
-        setPerfil({
-          ...perfilData,
-          nombre: perfilData.nombre || usuarioData.nombre,
-          colonia: perfilData.colonia || usuarioData.colonia,
-        } as PerfilCuidador);
+        setPerfil(perfilSnap.data() as PerfilCuidador);
       } catch (error) {
         console.error("Error cargando perfil de cuidador:", error);
         setError("No pudimos cargar este perfil. Intenta de nuevo.");

@@ -10,8 +10,6 @@ export default function PerfilCuidador() {
   const { user, profile } = useAuth();
   const uid = user?.uid;
 
-  // const [nombre, setNombre] = useState("");
-
   const [loading, setLoading] = useState(true);
 
   const [descripcion, setDescripcion] = useState("");

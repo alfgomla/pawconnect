@@ -11,13 +11,9 @@ export default function Login() {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-
-
     try {
-
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
-
       // 🔥 obtener datos del usuario
       const docRef = doc(db, "usuarios", user.uid);
       const docSnap = await getDoc(docRef);      
@@ -28,7 +24,7 @@ export default function Login() {
 
       // redirección por tipo
       if (data.tipo === "dueno") {
-        navigate("/buscar");
+        navigate("/perfil-dueno");
       } else if (data.tipo === "cuidador") {
         navigate("/perfil-cuidador");
       } else {

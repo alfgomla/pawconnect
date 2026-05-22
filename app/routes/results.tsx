@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router";
 import { db } from "../lib/firebase";
-import { collection, doc, getDoc, getDocs, query, where } from "firebase/firestore";
+import { collection, getDocs, query, where } from "firebase/firestore";
 import { ArrowLeft, Star, BookUser } from "lucide-react";
-import { useAuth } from "../context/AuthContext";
 
 type CuidadorResultado = {
   id: string;
@@ -52,15 +51,12 @@ export default function Results() {
         const docs = await Promise.all(
           querySnapshot.docs.map(async (perfilDoc) => {
             const perfilData = perfilDoc.data();
-            const usuarioSnap = await getDoc(doc(db, "usuarios", perfilDoc.id));
-            const usuarioData = usuarioSnap.exists() ? usuarioSnap.data() : {};
 
             return {
               id: perfilDoc.id,
               ...perfilData,
-              email: usuarioData.email,
-              nombre: obtenerPrimerNombre(perfilData.nombre || usuarioData.nombre),
-              colonia: perfilData.colonia || usuarioData.colonia,
+              nombre: obtenerPrimerNombre(perfilData.nombre),
+              colonia: perfilData.colonia,
             } as CuidadorResultado;
           })
         );
