@@ -244,22 +244,31 @@ export default function PerfilCuidador() {
 
         {reservas.length > 0 && (
           <div className="bg-white rounded-2xl shadow p-6 mt-4">
-            <h3 className="font-semibold mb-4">Reservas solicitadas</h3>
+            <h3 className="font-semibold mb-4" style={{ color: "var(--pakal-blue)" }}>
+              Reservas solicitadas
+            </h3>
 
             {reservas.map((reserva) => {
               const mascota = mascotasPorId[reserva.idMascota];
 
               return (
                 <div key={reserva.docId} className="mt-4 rounded-xl border border-gray-200 p-4">
-                  <p className="font-semibold">Reserva solicitada</p>
-                  <p className="text-sm text-gray-500">
+                  <img
+                  src={mascota?.fotoMascota || "./mascota_default.webp"}
+                  className="w-16 h-16 rounded-full object-cover"
+                />
+                  <p className="font-semibold" style={{ color: "var(--pakal-cyan"}}>Reserva solicitada</p>
+                  <p className="text-sm" style={{ color: "var(--pakal-cyan"}}>
                     Mascota: {mascota?.nombre || "Mascota"} {mascota?.tipoMascota ? `- ${mascota.tipoMascota}` : ""}
                   </p>
-                  <p className="text-sm text-gray-500">
+                  <p className="text-sm" style={{ color: "var(--pakal-cyan"}}>
+                    Peso: {mascota?.peso+ " kg" || "Pendiente"} | Estatura: {mascota?.estatura+ " cm" || "Pendiente"}
+                  </p>
+                  <p className="text-sm" style={{ color: "var(--pakal-cyan"}}>
                     Llegada: {reserva.diaLlegada || "Pendiente"} {reserva.horaLlegada || ""}
                   </p>
                   {reserva.diaSalida && (
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm" style={{ color: "var(--pakal-cyan"}}>
                       Salida: {reserva.diaSalida} {reserva.horaSalida || ""}
                     </p>
                   )}
@@ -283,7 +292,19 @@ export default function PerfilCuidador() {
                     {(chatsPorReserva[reserva.docId] || []).map((mensaje) => (
                       <div key={mensaje.docId} className="rounded-xl bg-gray-100 p-3">
                         <p className="text-sm text-gray-500">{formatearFecha(mensaje.fechaHora)}</p>
-                        <p className="text-gray-700">{mensaje.comentario}</p>
+                        {/* <p className="text-gray-700">{mensaje.comentario}</p> */}
+                        <p 
+                          className="text-gray-700" 
+                          style={{
+                            color: mensaje.comentario?.startsWith('D') 
+                              ? 'var(--pakal-cyan)' 
+                              : mensaje.comentario?.startsWith('C') 
+                                ? 'var(--pakal-blue)' 
+                                : 'var(--pakal-dark)' // Color por defecto si no empieza ni con D ni con C
+                          }}
+                        >
+                          {mensaje.comentario}
+                        </p>
                       </div>
                     ))}
                   </div>
