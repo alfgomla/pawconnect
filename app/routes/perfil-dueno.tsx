@@ -202,7 +202,18 @@ export default function PerfilDueno() {
                     {(chatsPorReserva[reserva.docId] || []).map((mensaje) => (
                       <div key={mensaje.docId} className="rounded-xl bg-gray-100 p-3">
                         <p className="text-sm text-gray-500">{formatearFecha(mensaje.fechaHora)}</p>
-                        <p className="text-gray-700">{mensaje.comentario}</p>
+                        {/* <p className="text-gray-700">{mensaje.comentario}</p> */}
+                        <p                     
+                          style={{
+                            color: mensaje.comentario?.startsWith('D') 
+                              ? 'var(--pakal-cyan)' 
+                              : mensaje.comentario?.startsWith('C') 
+                                ? 'var(--pakal-blue)' 
+                                : 'var(--pakal-dark)' // Color por defecto si no empieza ni con D ni con C
+                          }}
+                        >
+                          {mensaje.comentario+"si estoy aqui"}
+                        </p>
                       </div>
                     ))}
                   </div>

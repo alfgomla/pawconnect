@@ -292,7 +292,6 @@ export default function PerfilCuidador() {
                     {(chatsPorReserva[reserva.docId] || []).map((mensaje) => (
                       <div key={mensaje.docId} className="rounded-xl bg-gray-100 p-3">
                         <p className="text-sm text-gray-500">{formatearFecha(mensaje.fechaHora)}</p>
-                        {/* <p className="text-gray-700">{mensaje.comentario}</p> */}
                         <p 
                           className="text-gray-700" 
                           style={{
