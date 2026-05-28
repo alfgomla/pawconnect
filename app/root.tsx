@@ -15,9 +15,9 @@ export default function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
+    localStorage.clear();  
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
-      
       if (currentUser) {
         // Si hay usuario, buscamos su nombre en la colección "duenos"
         const docRef = doc(db, "duenos", currentUser.uid);

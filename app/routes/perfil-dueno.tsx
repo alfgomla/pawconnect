@@ -7,6 +7,7 @@ import {
   getDocs,
   query,
   serverTimestamp,
+  updateDoc,
   where,
 } from "firebase/firestore";
 import { useNavigate } from "react-router";
@@ -104,6 +105,31 @@ export default function PerfilDueno() {
     cargarDatos();
   }, [user]);
 
+  const cancelarReserva = async (reserva: Reserva) => {
+    const confirmar = window.confirm("¿Deseas cancelar esta reserva?");
+
+    if (!confirmar) return;
+
+    try {
+      await updateDoc(doc(db, "reserva", reserva.docId), {
+        estatus: "cancelado: "+ new Date().toLocaleDateString('en-US', {timeZone: 'America/Mexico_City'})
+        + " " 
+        + new Date().toLocaleTimeString('es-MX', {timeZone: 'America/Mexico_City', hour12: true})
+      });
+
+      setReservas((prev) => prev.filter((item) => item.docId !== reserva.docId));
+      setChatsPorReserva((prev) => {
+        const siguiente = { ...prev };
+        delete siguiente[reserva.docId];
+        return siguiente;
+      });
+    } catch (error) {
+      console.error("Error cancelando reserva:", error);
+      alert("No pudimos cancelar la reserva. Intenta de nuevo.");
+    }
+  };
+
+
   const enviarObservacion = async (reserva: Reserva) => {
     if (!user) return;
 
@@ -147,7 +173,9 @@ export default function PerfilDueno() {
             src={fotoPerfil || "./mascota_default.webp"}
             className="w-32 h-32 rounded-full mx-auto object-cover"
           />
-          <h2 className="text-2xl font-bold mt-3">{nombre || profile?.nombre}</h2>
+          <h2 className="text-2xl font-bold mt-3" style={{ color: 'var(--pakal-blue)' }}>
+            {nombre || profile?.nombre}
+          </h2>
           <p className="text-gray-500">Colonia: {colonia || "No especificada"}</p>
           <p className="text-gray-500">Telefono: {telefono || "XXXXXXXXXX"}</p>
         </div>
@@ -218,7 +246,7 @@ export default function PerfilDueno() {
                     ))}
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-4">
                     <button
                       type="button"
                       onClick={() => enviarObservacion(reserva)}
@@ -233,6 +261,13 @@ export default function PerfilDueno() {
                     >
                       Pagar
                     </button>
+                    <button
+                      type="button"
+                      onClick={() => cancelarReserva(reserva)}
+                      className="btn-sitter"
+                    >
+                      Cancelar
+                    </button>
                   </div>
                 </div>
               ))}
@@ -243,22 +278,22 @@ export default function PerfilDueno() {
           )}
         </div>
 
-        <div className="flex gap-4 mt-6">
-          <button
+        <div className="flex justify-center gap-4 mt-6">
+          <button 
             onClick={() => navigate("/editar-dueno")}
-            className="flex-1 py-3 bg-blue-500 text-white rounded-xl"
+            className="btn-user-fill flex-1 w-1/3"
           >
             Editar Perfil
           </button>
           <button
             onClick={() => navigate("/alta-mascota")}
-            className="flex-1 py-3 bg-blue-500 text-white rounded-xl"
+            className="btn-user-fill flex-1 w-1/3"
           >
             Agregar mascota
           </button>
           <button
             onClick={() => navigate("/buscar")}
-            className="flex-1 py-3 bg-cyan-500 text-white rounded-xl"
+            className="btn-user-fill flex-1 w-1/3"
           >
             Buscar Cuidadores
           </button>
