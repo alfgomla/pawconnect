@@ -13,9 +13,10 @@
   --pakal-white: #F8FAFC;
   --pakal-dark: #0F172A; 
   --pakal-light: #e5e7eb;
-  --pakal-gray: #525151;
+  --pakal-gray: #6e6e6e;
+  --pakal-gray-light: #dbd9df;
   /* Paleta auxiliar PAKAL */
-  --pakal-red: #ec4a4a;
+  --pakal-red: #c0c0c0;
   
   /* Tipografía sugerida: Satoshi (o Inter como fallback) */
 
@@ -107,7 +108,7 @@ body:has(.menu-overlay) {
 
 
 
-.btn-user, .btn-sitter, .btn-user-fill { 
+.btn-user, .btn-sitter, .btn-user-fill, .btn-desactivar { 
   padding: 0.5rem 1rem; 
   border-radius: 8px; 
   font-weight: 800;
@@ -117,6 +118,7 @@ body:has(.menu-overlay) {
 .btn-user { background: var(--pakal-cyan); color: var(--pakal-white) !important; }
 .btn-user-fill { background: var(--pakal-blue); color: var(--pakal-white) !important; }
 .btn-sitter { border: 2px solid var(--pakal-cyan); color: var(--pakal-cyan) !important; }
+.btn-desactivar { background: var(--pakal-gray-light); color: var(--pakal-gray) !important; }
 .btn-user:hover, .btn-sitter:hover, .btn-user-fill:hover { transform: translateY(-2px); }
 
 /* --- Layout --- */

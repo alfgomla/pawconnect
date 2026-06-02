@@ -94,8 +94,6 @@ type LocationPickerProps = {
   onChange: (latitud: number, longitud: number) => void;
 };
 
-let marcado = false;
-
 function LocationPicker({ latitud, longitud, onChange }: LocationPickerProps) {
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const leafletRef = useRef<typeof import("leaflet") | null>(null);
@@ -104,7 +102,6 @@ function LocationPicker({ latitud, longitud, onChange }: LocationPickerProps) {
 
   const latitudMapa = Number.isFinite(Number(latitud)) ? Number(latitud) : ubicacionDefault.latitudIni;
   const longitudMapa = Number.isFinite(Number(longitud)) ? Number(longitud) : ubicacionDefault.longitudIni;
-  
 
   useEffect(() => {
     if (!mapContainerRef.current || mapRef.current) return;
@@ -203,7 +200,7 @@ export default function PerfilCuidador() {
   const [ciudad, setCiudad] = useState("");
   const [colonia, setColonia] = useState("");
   const [fotoPerfil, setFotoPerfil] = useState("");
-  const [codigo, setCodigo] = useState("");
+  const [codigoPostal, setCodigoPostal] = useState("");
   const [servicios, setServicios] = useState<string[]>([]);
   const [rating, setRating] = useState(0);
   const [latitud, setLatitud] = useState("");
@@ -219,12 +216,6 @@ export default function PerfilCuidador() {
   const getDisponibilidadServicio = (servicio: string) => {
     return disponibilidad[servicio] || disponibilidadDefault;
   };
-
-  function manejarCambio() {
-    marcado = !marcado;
-    setCodigo(marcado ? "revision" : "incompleto");
-  }
-
 
   const updateDisponibilidadServicio = (
     servicio: string,
@@ -267,7 +258,7 @@ export default function PerfilCuidador() {
                 setCiudad(data.ciudad || "");
                 setColonia(data.colonia || ""); 
                 setFotoPerfil(data.fotoPerfil || "");
-                setCodigo(data.codigo || "");
+                setCodigoPostal(data.codigoPostal || "");
                 setServicios(normalizarServicios(data.servicios));
                 setDisponibilidad(normalizarDisponibilidad(data.disponibilidad));
                 setRating(data.rating || 0);
@@ -362,7 +353,7 @@ export default function PerfilCuidador() {
         ciudad: ciudad.toUpperCase(),
         colonia: colonia.toUpperCase(),
         fotoPerfil,
-        codigo,
+        codigoPostal,
         servicios: serviciosNormalizados,
         disponibilidad: disponibilidadActiva,
         rating,
@@ -433,7 +424,15 @@ export default function PerfilCuidador() {
             style={{ textTransform: "uppercase" }}
             onChange={(e) => setColonia(e.target.value.toUpperCase())}
           />
-          
+
+          {/* codigo postal */}
+          <h3 className="font-semibold mb-2">Codigo Postal</h3>
+          <input className="w-full border border-gray-300 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+            placeholder="Código Postal"
+            value={codigoPostal}
+            onChange={(e) => setCodigoPostal(e.target.value)}
+          />
+
           {/* telefono */}
           <h3 className="font-semibold mb-2">Contacto</h3>
           <input className="w-full border border-gray-300 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
@@ -587,37 +586,10 @@ export default function PerfilCuidador() {
             </div>
           </div>
         </div>
-        <div className="cambios">
 
-          <div className="flex items-center gap-3 mt-4">
-            <input
-              type="checkbox"
-              id="terminos"
-              checked={marcado}
-              onChange={manejarCambio}
-              // Clases de Tailwind para estilizar la casilla
-              className="w-5 h-5 text-cyan-600 bg-gray-100 border-gray-300 rounded focus:ring-cyan-500 focus:ring-2 accent-cyan-600 cursor-pointer"
-            />
-            <label 
-              htmlFor="terminos" 
-              className="text-gray-700 font-medium select-none cursor-pointer"
-            >
-              Si decide guardar sus cambios pasara a revision y no se publicara su perfil 
-              hasta que el equipo de PawConnect revise y apruebe su informacion.
-            </label>
-          </div>
-
-          <button onClick={handleSave}
-                  disabled={!marcado} 
-                  className={marcado ? "btn-user w-full mt-4" : "btn-desactivar w-full mt-4"}
-          >
-              Guardar cambios
-          </button>
-          <button onClick={() => navigate("/perfil-cuidador")} className="btn-user w-full mt-6">
-              Cancelar y volver al perfil
-          </button>
-          
-        </div>    
+        <button onClick={handleSave} className="btn-user w-full mt-6">
+            Guardar cambios
+        </button>
 
       </div>
     </ProtectedRoute>

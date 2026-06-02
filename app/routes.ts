@@ -15,4 +15,5 @@ export default [
   route("ver-cuidador/:id", "routes/ver-cuidador.tsx"),
   route("alta-mascota", "routes/alta-mascota.tsx"),
   route("pago", "routes/pago.tsx"),
+  route("dashboard-cuidador", "routes/dashboard-cuidador.tsx"),
 ] satisfies RouteConfig;

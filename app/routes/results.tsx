@@ -16,6 +16,7 @@ type CuidadorResultado = {
   servicios?: string[];
   email?: string;
   colonia?: string;
+  codigo?: string;
 };
 
 const obtenerPrimerNombre = (nombre?: string) => {
@@ -43,7 +44,8 @@ export default function Results() {
       try {
         const cuidadoresQuery = query(
           collection(db, "perfiles_cuidadores"),
-          where("servicios", "array-contains", servicioBusqueda)
+          where("servicios", "array-contains", servicioBusqueda),
+          where("codigo", "==", "completo")
         );
 
         const querySnapshot = await getDocs(cuidadoresQuery);
